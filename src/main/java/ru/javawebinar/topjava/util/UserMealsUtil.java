@@ -39,7 +39,7 @@ public class UserMealsUtil {
                         meal.getDateTime(),
                         meal.getDescription(),
                         meal.getCalories(),
-                        0 > caloriesPerDay));
+                        0 < caloriesPerDay));
             }
         }
 
