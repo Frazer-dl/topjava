@@ -88,22 +88,14 @@ public class UserMealsUtil {
                                                                     LocalTime startTime,
                                                                     LocalTime endTime,
                                                                     int caloriesPerDay) {
-
-        return recursiveCycles(meals, startTime, endTime, caloriesPerDay);
-    }
-
-    public static List<UserMealWithExcess> recursiveCycles(List<UserMeal> meals,
-                                                    LocalTime startTime,
-                                                    LocalTime endTime,
-                                                    int caloriesPerDay) {
         while (count < meals.size()) {
             int i = count;
             caloriesSumPerDate.merge(meals.get(i).getDateTime().toLocalDate(), meals.get(i).getCalories(), Integer::sum);
             if (TimeUtil.isBetweenHalfOpen(meals.get(i).getDateTime().toLocalTime(), startTime, endTime)) {
                 count++;
-                if (count != meals.size()) {
-                    recursiveCycles(meals, startTime, endTime, caloriesPerDay);
-                }
+
+                if (count != meals.size()) optionalFilteredByCycles(meals, startTime, endTime, caloriesPerDay);
+
                 userMealWithExcessList.add((new UserMealWithExcess(
                         meals.get(i).getDateTime(),
                         meals.get(i).getDescription(),
