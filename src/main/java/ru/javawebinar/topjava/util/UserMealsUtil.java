@@ -82,33 +82,18 @@ public class UserMealsUtil {
                                                                     int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumPerDate = new HashMap<>();
         List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
-        List<UserMealWithExcess> temp = new ArrayList<>();
 
-
-        for (UserMeal userMeal: meals) {
+        for (UserMeal userMeal : meals) {
             caloriesSumPerDate.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum);
+
             if (TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
-                temp.add(new UserMealWithExcess(userMeal.getDateTime(),
+                UserMealWithExcess userMealWithExcess = new UserMealWithExcess(userMeal.getDateTime(),
                         userMeal.getDescription(),
                         userMeal.getCalories(),
-                        caloriesSumPerDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay));
+                        caloriesSumPerDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay);
+                userMealWithExcessList.add(userMealWithExcess);
             }
         }
-
-        for (UserMealWithExcess userMealWithExcess: temp) {
-            System.out.println(userMealWithExcess);
-        }
-//        for (UserMeal userMeal : meals) {
-//            caloriesSumPerDate.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum);
-//
-//            if (TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
-//                UserMealWithExcess userMealWithExcess = new UserMealWithExcess(userMeal.getDateTime(),
-//                        userMeal.getDescription(),
-//                        userMeal.getCalories(),
-//                        caloriesSumPerDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay);
-//                userMealWithExcessList.add(userMealWithExcess);
-//            }
-//        }
 
         return userMealWithExcessList;
     }
