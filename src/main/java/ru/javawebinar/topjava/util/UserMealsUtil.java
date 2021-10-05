@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 
 public class UserMealsUtil {
 
-    static int count = 0;
-    static Map<LocalDate, Integer> caloriesSumPerDate = new HashMap<>();
-    static List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
-
     public static void main(String[] args) {
         List<UserMeal> meals = Arrays.asList(
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
@@ -38,6 +34,19 @@ public class UserMealsUtil {
         System.out.println("optionalFilteredByStreams:");
         optionalFilteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(21, 0), 2000).forEach(System.out::println);
 
+        List<UserMeal> meals2 = Arrays.asList(
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 12, 0, 0), "aaa", 100),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 13, 14, 0), "sss", 1000),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 14, 13, 0), "ddd", 500),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 15, 14, 0), "ff", 500),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 16, 13, 0), "gg", 1000),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 17, 20, 0), "hh", 500),
+                new UserMeal(LocalDateTime.of(2020, Month.MAY, 18, 20, 0), "jj", 410)
+        );
+        System.out.println("optionalFilteredByCycles:");
+        optionalFilteredByCycles(meals2, LocalTime.of(7, 0), LocalTime.of(14, 0), 2000).forEach(System.out::println);
+        System.out.println("filteredByCycles:");
+        filteredByCycles(meals2, LocalTime.of(7, 0), LocalTime.of(14, 0), 2000).forEach(System.out::println);
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals,
@@ -45,7 +54,6 @@ public class UserMealsUtil {
                                                             LocalTime endTime,
                                                             int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumPerDate = new HashMap<>();
-
 
         for (UserMeal meal : meals) {
             caloriesSumPerDate.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum);
@@ -88,23 +96,31 @@ public class UserMealsUtil {
                                                                     LocalTime startTime,
                                                                     LocalTime endTime,
                                                                     int caloriesPerDay) {
-        while (count < meals.size()) {
-            int i = count;
-            caloriesSumPerDate.merge(meals.get(i).getDateTime().toLocalDate(), meals.get(i).getCalories(), Integer::sum);
-            if (TimeUtil.isBetweenHalfOpen(meals.get(i).getDateTime().toLocalTime(), startTime, endTime)) {
-                count++;
+        Map<LocalDate, Integer> caloriesSumPerDate = new HashMap<>();
+        List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
 
-                if (count != meals.size()) optionalFilteredByCycles(meals, startTime, endTime, caloriesPerDay);
-
-                userMealWithExcessList.add((new UserMealWithExcess(
-                        meals.get(i).getDateTime(),
-                        meals.get(i).getDescription(),
-                        meals.get(i).getCalories(),
-                        caloriesSumPerDate.get(meals.get(i).getDateTime().toLocalDate()) > caloriesPerDay)));
+        class RecursiveCycles {
+            int count = 0;
+            public List<UserMealWithExcess> recursiveCycles() {
+                while (count < meals.size()) {
+                    int i = count;
+                    caloriesSumPerDate.merge(meals.get(i).getDateTime().toLocalDate(), meals.get(i).getCalories(), Integer::sum);
+                    if (TimeUtil.isBetweenHalfOpen(meals.get(i).getDateTime().toLocalTime(), startTime, endTime)) {
+                        count++;
+                        if (count != meals.size()) recursiveCycles();
+                        userMealWithExcessList.add((new UserMealWithExcess(
+                                meals.get(i).getDateTime(),
+                                meals.get(i).getDescription(),
+                                meals.get(i).getCalories(),
+                                caloriesSumPerDate.get(meals.get(i).getDateTime().toLocalDate()) > caloriesPerDay)));
+                    }
+                    count++;
+                }
+                return userMealWithExcessList;
             }
-            count++;
         }
-        return userMealWithExcessList;
+
+        return new RecursiveCycles().recursiveCycles();
     }
 
     public static List<UserMealWithExcess> optionalFilteredByStreams(List<UserMeal> meals,
