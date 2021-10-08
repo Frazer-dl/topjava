@@ -1,5 +1,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ru.javawebinar.topjava.model.MealTo" %>
+<%@ page import="ru.javawebinar.topjava.DAO.MealToDao" %>
+<%@ page import="ru.javawebinar.topjava.DAO.MealToDaoImpl" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%--
   Created by IntelliJ IDEA.
   User: genov
@@ -15,7 +18,7 @@
 <head>
     <title>Meals</title>
 </head>
-<a href="meals?action=create">Add Meal</a>
+<a href="edit.jsp">Add Meal</a>
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
@@ -34,11 +37,11 @@
     <tbody>
     <c:forEach var="meal" items= "${list}">
         <tr style="color:${meal.isExcess() ? 'green' : 'red'}">
-            <td>${meal.getDateTime()}</td>
+            <td>${meal.getDateTime().format( DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
             <td>${meal.getDescription()}</td>
             <td >${meal.getCalories()}</td>
-            <td><a>Update</a></td>
-            <td><a>Delete</a></td>
+            <td><a href="edit.jsp?id=${meal.getId()}"> <button type="button" class="update">Update</button></a></td>
+            <td><a href="delete.jsp?id=${meal.getId()}"> <button type="button" class="delete">Delete</button></a></td>
         </tr>
     </c:forEach>
     </tbody>

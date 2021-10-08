@@ -23,10 +23,24 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
-        if (cache.getAll().size() == 0) cache.init();
-        List<MealTo> meals = cache.getAll();
-        meals.forEach(System.out::println);
-        request.setAttribute("list", meals);
-        request.getRequestDispatcher("meals.jsp").forward(request, response);
+        if (request.getParameter("id") == null) {
+            if (cache.getAll().size() == 0) cache.init();
+            List<MealTo> meals = cache.getAll();
+            request.setAttribute("list", meals);
+            request.getRequestDispatcher("meals.jsp").forward(request, response);
+        } else  {
+            cache.deleteCache(Long.parseLong(request.getParameter("id")));
+            request.getRequestDispatcher("meals.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean save = request.getParameter("save") != null;
+        String id = request.getParameter("id");
+        System.out.println(id);
+        if (save) {
+            request.getRequestDispatcher("update.jsp").forward(request, response);
+        }
     }
 }
