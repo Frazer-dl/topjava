@@ -3,24 +3,23 @@
 <%@ page import="ru.javawebinar.topjava.model.MealTo" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.util.Locale" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     try {
-        String id= (String)request.getSession().getAttribute("id");
+        String id= request.getParameter("id");
         MealToDao mealToDao = new MealToDaoImpl();
-        if (id != null) {
-            Long ids = Long.parseLong(request.getParameter("name"));
-            mealToDao.saveCache(mealToDao.getCacheById(ids), ids);
-        }
-        Long ids = (long) mealToDao.getAll().size() +1L;
-        String str = request.getParameter("dateTime");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String str = request.getParameter("date");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH);
         LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
-
+        String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
+        boolean isExcess = Boolean.parseBoolean(request.getParameter("isExcess"));
 
-        MealTo meal = new MealTo(ids, dateTime, request.getParameter("description"), calories, false);
-        mealToDao.saveCache(meal);
+        Long ids = Long.parseLong(request.getParameter("id"));
+        MealTo meal = new MealTo(ids, dateTime, description, calories, isExcess);
+        mealToDao.saveCache(meal, ids);
+
     } catch (Exception e) {
         System.out.println("Invalid id");
     }

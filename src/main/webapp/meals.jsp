@@ -18,7 +18,7 @@
 <head>
     <title>Meals</title>
 </head>
-<a href="edit.jsp">Add Meal</a>
+<a href="meals?edit=2">Add Meal</a>
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
@@ -27,6 +27,7 @@
 <table  border="1" width="90%%">
     <thead>
     <tr>
+        <th>ID</th>
         <th>DATE</th>
         <th>DESCRIPTION</th>
         <th>CALORIES</th>
@@ -36,15 +37,16 @@
     </thead>
     <tbody>
     <c:forEach var="meal" items= "${list}">
-        <tr style="color:${meal.isExcess() ? 'green' : 'red'}">
-            <td>${meal.getDateTime().format( DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
+        <tr style="color:${meal.isExcess() ? 'red' : 'green'}">
+            <td>${meal.getId()}</td>
+            <td>${meal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
             <td>${meal.getDescription()}</td>
-            <td >${meal.getCalories()}</td>
-            <td><a href="edit.jsp?id=${meal.getId()}"> <button type="button" class="update">Update</button></a></td>
-            <td><a href="delete.jsp?id=${meal.getId()}"> <button type="button" class="delete">Delete</button></a></td>
+            <td>${meal.getCalories()}</td>
+            <td><a href="meals?id=${meal.getId()}&edit=1"> <button type="button">Update</button></a></td>
+            <td><a href="delete.jsp?id=${meal.getId()}"> <button type="button">Delete</button></a></td>
         </tr>
     </c:forEach>
-    </tbody>
+        </tbody>
 </table>
 </body>
 </html>

@@ -8,13 +8,13 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 
+
 import java.time.Duration;
 
 public class CacheHelper {
     private static CacheHelper instance;
     private CacheManager cacheManager;
-    private Cache<Long, Object> cache;
-    private CacheConfiguration<Long, Object> cacheConfiguration;
+    private final CacheConfiguration<Long, Object> cacheConfiguration;
     public Long ttl = 10000L;
 
     private CacheHelper() {
@@ -35,7 +35,7 @@ public class CacheHelper {
     public void putInCash() {
         cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build();
         cacheManager.init();
-        cache = cacheManager.createCache("cache", cacheConfiguration);
+        cacheManager.createCache("cache", cacheConfiguration);
     }
 
     public Cache<Long, Object> getCache() {
