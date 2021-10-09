@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -47,8 +48,13 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean save = request.getParameter("save") != null;
-        if (save) {
+        request.setAttribute("cache", cache);
+
+        if (save && request.getParameter("id").equals("null")) {
             request.getRequestDispatcher("add.jsp").forward(request, response);
+        }
+        if (save && !request.getParameter("id").equals("null")) {
+            request.getRequestDispatcher("update.jsp").forward(request, response);
         }
     }
 }

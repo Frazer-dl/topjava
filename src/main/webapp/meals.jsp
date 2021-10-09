@@ -37,7 +37,7 @@
     </thead>
     <tbody>
     <c:forEach var="meal" items= "${list}">
-        <tr style="color:${meal.isExcess() ? 'red' : 'green'}">
+        <tr style="color:${meal.isExcess() ? 'green' : 'red'}">
             <td>${meal.getId()}</td>
             <td>${meal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
             <td>${meal.getDescription()}</td>

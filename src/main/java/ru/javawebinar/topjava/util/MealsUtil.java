@@ -24,20 +24,6 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<MealTo> filteredByStreamsTemp(List<MealTo> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(
-                        Collectors.groupingBy(m -> m.getDateTime().toLocalDate(), Collectors.summingInt(MealTo::getCalories))
-//                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
-                );
-
-        return meals.stream()
-                .filter(um -> TimeUtil.isBetweenHalfOpen(um.getDateTime().toLocalTime(), startTime, endTime))
-                .map(um -> new MealTo(um.getId(), um.getDateTime(), um.getDescription(), um.getCalories(),
-                        caloriesSumByDate.get(um.getDateTime().toLocalDate()) > caloriesPerDay))
-                .collect(Collectors.toList());
-    }
-
     private static MealTo createTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
