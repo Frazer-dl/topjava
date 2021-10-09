@@ -1,10 +1,12 @@
 package ru.javawebinar.topjava.DAO;
+
 import org.ehcache.Cache;
+import ru.javawebinar.topjava.DTO.MealToMeal;
+import ru.javawebinar.topjava.DTO.MealToMealImpl;
 import ru.javawebinar.topjava.config.CacheHelper;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 
 public class MealToDaoImpl implements MealToDao {
@@ -47,8 +50,10 @@ public class MealToDaoImpl implements MealToDao {
 
     @Override
     public void init() {
+        List<Meal> meals;
+
         if (getAll().isEmpty()) {
-            List<Meal> meals = Arrays.asList(
+            meals = Arrays.asList(
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
@@ -57,6 +62,16 @@ public class MealToDaoImpl implements MealToDao {
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
             );
+            MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000).forEach(this::saveCache);
+        } else {
+            meals = getAll().stream()
+                    .map(m->{
+                        MealToMeal dto = new MealToMealImpl(m);
+                        return dto.getMealTo();
+                    })
+                    .collect(Collectors.toList());
+            getAll().forEach(System.out::println);
+            cacheHelper.clearCache();
             MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000).forEach(this::saveCache);
         }
     }

@@ -7,8 +7,6 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-
-
 import java.time.Duration;
 
 public class CacheHelper {
@@ -40,5 +38,9 @@ public class CacheHelper {
 
     public Cache<Long, Object> getCache() {
         return cacheManager.getCache("cache", Long.class, Object.class);
+    }
+
+    public void clearCache() {
+        cacheManager.getCache("cache", Long.class, Object.class).clear();
     }
 }

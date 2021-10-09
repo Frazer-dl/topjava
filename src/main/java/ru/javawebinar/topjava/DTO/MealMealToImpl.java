@@ -7,12 +7,12 @@ import ru.javawebinar.topjava.model.MealTo;
 
 import java.time.LocalDateTime;
 
-public class MealToMealToImpl implements MealToMealTo {
+public class MealMealToImpl implements MealMealTo {
     private final MealToDao cache = new MealToDaoImpl();
     private final MealTo mealTo;
     private final LocalDateTime date;
 
-    public MealToMealToImpl(Meal meal) {
+    public MealMealToImpl(Meal meal) {
         Long id = meal.getId();
         this.date = meal.getDateTime();
         String description = meal.getDescription();
