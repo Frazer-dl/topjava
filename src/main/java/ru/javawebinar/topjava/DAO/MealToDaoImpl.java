@@ -32,8 +32,8 @@ public class MealToDaoImpl implements MealToDao {
     public List<MealTo> getAll() {
         List<MealTo> meals = new ArrayList<>();
         for (Cache.Entry<Long, Object> entry: cacheHelper.getCache()) {
-            MealTo entity = (MealTo) entry.getValue();
-            meals.add(entity);
+            MealTo mealTo = (MealTo) entry.getValue();
+            meals.add(mealTo);
         }
         return meals;
     }
@@ -62,19 +62,18 @@ public class MealToDaoImpl implements MealToDao {
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
             );
-            MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000).forEach(this::saveCache);
         } else {
             meals = getAll().stream()
                     .map(m->{
-                        MealToMeal dto = new MealToMealImpl(m);
-                        return dto.getMealTo();
-                    })
+                                MealToMeal dto = new MealToMealImpl(m);
+                                return dto.getMealTo();
+                            })
                     .collect(Collectors.toList());
-            getAll().forEach(System.out::println);
             cacheHelper.clearCache();
-            meals.forEach(System.out::println);
-            MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000).forEach(this::saveCache);
         }
+        List<MealTo> mealToList = MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000);
+
+        mealToList.forEach(this::saveCache);
     }
 
     @Override
