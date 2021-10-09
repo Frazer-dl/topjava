@@ -72,6 +72,7 @@ public class MealToDaoImpl implements MealToDao {
                     .collect(Collectors.toList());
             getAll().forEach(System.out::println);
             cacheHelper.clearCache();
+            meals.forEach(System.out::println);
             MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000).forEach(this::saveCache);
         }
     }

@@ -5,7 +5,7 @@
 <%@ page import="ru.javawebinar.topjava.DTO.MealMealToImpl" %>
 <%@ page import="ru.javawebinar.topjava.model.Meal" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" language="" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     try {
         MealToDao cache = (MealToDao) request.getAttribute("cache");
