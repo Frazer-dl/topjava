@@ -34,7 +34,7 @@ public class MealServlet extends HttpServlet {
             Long id = Long.parseLong(request.getParameter("id"));
             MealTo meal = cache.getCacheById(id);
             request.setAttribute("id", meal.getId());
-            request.setAttribute("date", meal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+            request.setAttribute("date", meal.getDateTime());
             request.setAttribute("description", meal.getDescription());
             request.setAttribute("calories", meal.getCalories());
             request.setAttribute("isExcess", meal.isExcess());

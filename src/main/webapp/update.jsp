@@ -1,8 +1,9 @@
 <%@ page import="ru.javawebinar.topjava.DAO.MealToDao" %>
-<%@ page import="ru.javawebinar.topjava.model.MealTo" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.util.Locale" %>
+<%@ page import="ru.javawebinar.topjava.DTO.MealToMealToImpl" %>
+<%@ page import="ru.javawebinar.topjava.model.Meal" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     try {
@@ -14,11 +15,10 @@
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        MealTo meal = new MealTo(id, dateTime, description, calories, true);
-        cache.saveCache(meal);
-
+        MealToMealToImpl meal = new MealToMealToImpl(new Meal(id, dateTime, description, calories));
+        cache.saveCache(meal.getMealTo());
     } catch (Exception e) {
-        System.out.println("Invalid id");
+        System.out.println("Can't update");
     }
 %>
 <c:redirect url="http://localhost:8080/topjava/meals"/>

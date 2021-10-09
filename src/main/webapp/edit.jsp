@@ -12,7 +12,7 @@
     <input type="hidden" name="isExcess" value=<%=request.getAttribute("isExcess")%>>
     <p>
         <label for="date">DateTime: </label>
-        <input type="datetime-local" id="date" name="date" value=<%=request.getAttribute("dateTime")%>>
+        <input type="datetime-local" id="date" name="date" value=<%=request.getAttribute("date")%>>
     </p>
     <p>
         <label for="description">Description: </label>
