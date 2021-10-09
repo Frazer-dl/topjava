@@ -8,7 +8,7 @@
         MealToDao mealToDao = new MealToDaoImpl();
         mealToDao.deleteCache(id);
     } catch (Exception e) {
-        System.out.println("Invalid id");
+        System.out.println("Can't delete");
     }
 %>
 <c:redirect url="http://localhost:8080/topjava/meals"/>
