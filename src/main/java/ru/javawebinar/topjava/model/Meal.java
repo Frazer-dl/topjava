@@ -19,6 +19,15 @@ public class Meal {
         this.description = description;
         this.calories = calories;
     }
+    @Override
+    public String toString() {
+        return "MealTo{" +
+                "getId=" + id +
+                "dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", calories=" + calories +
+                '}';
+    }
 
     public LocalDateTime getDateTime() {
         return dateTime;

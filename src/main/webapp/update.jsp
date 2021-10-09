@@ -2,7 +2,6 @@
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.util.Locale" %>
-<%@ page import="ru.javawebinar.topjava.DTO.MealMealToImpl" %>
 <%@ page import="ru.javawebinar.topjava.model.Meal" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
@@ -15,8 +14,8 @@
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        MealMealToImpl meal = new MealMealToImpl(new Meal(id, dateTime, description, calories));
-        cache.saveCache(meal.getMealTo());
+        Meal m = new Meal(id, dateTime, description, calories);
+        cache.saveCache(m);
     } catch (Exception e) {
         System.out.println("Can't update");
     }

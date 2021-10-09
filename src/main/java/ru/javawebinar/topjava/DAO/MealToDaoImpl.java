@@ -1,20 +1,14 @@
 package ru.javawebinar.topjava.DAO;
 
 import org.ehcache.Cache;
-import ru.javawebinar.topjava.DTO.MealToMeal;
-import ru.javawebinar.topjava.DTO.MealToMealImpl;
 import ru.javawebinar.topjava.config.CacheHelper;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 
 public class MealToDaoImpl implements MealToDao {
@@ -23,24 +17,24 @@ public class MealToDaoImpl implements MealToDao {
     Long id;
 
     @Override
-    public void saveCache(MealTo meal) {
-        id = meal.getId();
-        cacheHelper.getCache().put(id, meal);
+    public void saveCache(Meal m) {
+        id = m.getId();
+        cacheHelper.getCache().put(id, m);
     }
 
     @Override
-    public List<MealTo> getAll() {
-        List<MealTo> meals = new ArrayList<>();
+    public List<Meal> getAll() {
+        List<Meal> mList = new ArrayList<>();
         for (Cache.Entry<Long, Object> entry: cacheHelper.getCache()) {
-            MealTo mealTo = (MealTo) entry.getValue();
-            meals.add(mealTo);
+            Meal m = (Meal) entry.getValue();
+            mList.add(m);
         }
-        return meals;
+        return mList;
     }
 
     @Override
-    public MealTo getCacheById(Long id) {
-        return (MealTo) cacheHelper.getCache().get(id);
+    public Meal getCacheById(Long id) {
+        return (Meal) cacheHelper.getCache().get(id);
     }
 
     @Override
@@ -63,17 +57,10 @@ public class MealToDaoImpl implements MealToDao {
                     new Meal(getId(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
             );
         } else {
-            meals = getAll().stream()
-                    .map(m->{
-                                MealToMeal dto = new MealToMealImpl(m);
-                                return dto.getMealTo();
-                            })
-                    .collect(Collectors.toList());
-            cacheHelper.clearCache();
+            meals = new ArrayList<>(getAll());
         }
-        List<MealTo> mealToList = MealsUtil.filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(21, 0), 2000);
 
-        mealToList.forEach(this::saveCache);
+        meals.forEach(this::saveCache);
     }
 
     @Override

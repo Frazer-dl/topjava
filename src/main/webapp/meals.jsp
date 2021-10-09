@@ -1,7 +1,3 @@
-<%@ page import="java.util.List" %>
-<%@ page import="ru.javawebinar.topjava.model.MealTo" %>
-<%@ page import="ru.javawebinar.topjava.DAO.MealToDao" %>
-<%@ page import="ru.javawebinar.topjava.DAO.MealToDaoImpl" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%--
   Created by IntelliJ IDEA.
@@ -37,7 +33,7 @@
     </thead>
     <tbody>
     <c:forEach var="meal" items= "${list}">
-        <tr style="color:${meal.isExcess() ? 'green' : 'red'}">
+        <tr style="color:${meal.isExcess() ? 'red' : 'green'}">
             <td>${meal.getId()}</td>
             <td>${meal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
             <td>${meal.getDescription()}</td>
