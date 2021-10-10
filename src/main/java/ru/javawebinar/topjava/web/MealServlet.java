@@ -38,8 +38,6 @@ public class MealServlet extends HttpServlet {
                     .filter(elem -> elem.getId() == Long.parseLong(request.getParameter("id")))
                     .findFirst()
                     .get();
-            mealDao.read().forEach(System.out::println);
-            System.out.println("meal: " + m);
             request.setAttribute("meal", m);
             request.getRequestDispatcher("edit.jsp").forward(request, response);
         }
@@ -74,8 +72,7 @@ public class MealServlet extends HttpServlet {
                 log.debug("Can't create");
             }
         }
-        System.out.println(!request.getParameter("id").isEmpty());
-        System.out.println(request.getParameter("id"));
+
         if (save && !request.getParameter("id").isEmpty()) {
             try {
                 Meal meal = new Meal(mealDao.read(Long.parseLong(request.getParameter("id"))).getId(),

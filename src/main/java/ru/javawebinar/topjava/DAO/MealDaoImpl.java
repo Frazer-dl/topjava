@@ -27,11 +27,6 @@ public class MealDaoImpl implements MealDao {
     }
 
     @Override
-    public void update(Meal m) {
-        repository.put(m.getId(), m);
-    }
-
-    @Override
     public void create(Meal m) {
         repository.put(size.incrementAndGet(), m);
     }
@@ -44,6 +39,11 @@ public class MealDaoImpl implements MealDao {
     @Override
     public Meal read(long id) {
         return repository.get(id);
+    }
+
+    @Override
+    public void update(Meal m) {
+        repository.put(m.getId(), m);
     }
 
     @Override
