@@ -66,7 +66,7 @@ public class MealServlet extends HttpServlet {
 
         if (save && request.getParameter("id").isEmpty()) {
             try {
-                Meal m = new Meal(mealDao.read().size()+1L, dateTime, description, calories);
+                Meal m = new Meal(0L, dateTime, description, calories);
                 mealDao.create(m);
             } catch (Exception e) {
                 log.debug("Can't create");

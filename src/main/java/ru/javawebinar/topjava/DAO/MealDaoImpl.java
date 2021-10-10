@@ -28,7 +28,7 @@ public class MealDaoImpl implements MealDao {
 
     @Override
     public void create(Meal m) {
-        repository.put(size.incrementAndGet(), m);
+        repository.put(size.incrementAndGet(), new Meal(size.get(), m.getDateTime(), m.getDescription(), m.getCalories()));
     }
 
     @Override
