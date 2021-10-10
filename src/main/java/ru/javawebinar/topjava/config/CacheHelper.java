@@ -39,8 +39,4 @@ public class CacheHelper {
     public Cache<Long, Object> getCache() {
         return cacheManager.getCache("cache", Long.class, Object.class);
     }
-
-    public void clearCache() {
-        cacheManager.getCache("cache", Long.class, Object.class).clear();
-    }
 }

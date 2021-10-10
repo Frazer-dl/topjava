@@ -14,7 +14,7 @@
 <head>
     <title>Meals</title>
 </head>
-<a href="meals?edit=2">Add Meal</a>
+<a href="meals?action=create">Add Meal</a>
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
@@ -34,12 +34,12 @@
     <tbody>
     <c:forEach var="meal" items= "${list}">
         <tr style="color:${meal.isExcess() ? 'red' : 'green'}">
-            <td>${meal.getId()}</td>
+            <td>${meal.id}</td>
             <td>${meal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
             <td>${meal.getDescription()}</td>
             <td>${meal.getCalories()}</td>
-            <td><a href="meals?id=${meal.getId()}&edit=1"> <button type="button">Update</button></a></td>
-            <td><a href="delete.jsp?id=${meal.getId()}"> <button type="button">Delete</button></a></td>
+            <td><a href="meals?id=${meal.getId()}&action=update"> <button type="button">Update</button></a></td>
+            <td><a href="meals?id=${meal.getId()}&action=delete"> <button type="button">Delete</button></a></td>
         </tr>
     </c:forEach>
         </tbody>

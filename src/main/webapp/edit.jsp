@@ -8,19 +8,18 @@
 <hr>
 <h2>Edit meal</h2>
 <form action="${pageContext.request.contextPath}/meals" method="post">
-    <input type="hidden" name="id" value=<%=request.getAttribute("id")%>>
-    <input type="hidden" name="isExcess" value=<%=request.getAttribute("isExcess")%>>
+    <input type="hidden" name="id" value="${meal.id}">
     <p>
         <label for="date">DateTime: </label>
-        <input type="datetime-local" id="date" name="date" value=<%=request.getAttribute("date")%>>
+        <input type="datetime-local" id="date" name="date" value="${meal.dateTime == null ? "" : meal.dateTime}">
     </p>
     <p>
         <label for="description">Description: </label>
-        <input type="text" id="description" name="description" value=<%=request.getAttribute("description")%>>
+        <input type="text" id="description" name="description" value="${meal.description == null ? "" : meal.description}">
     </p>
     <p>
         <label for="calories">Calories: </label>
-        <input type="text" id="calories" name="calories" value=<%=request.getAttribute("calories")%>>
+        <input type="number" id="calories" name="calories" value="${meal.calories == null ? "" : meal.calories}">
     </p>
     <p>
         <input type="submit" name="save" value="Save">
