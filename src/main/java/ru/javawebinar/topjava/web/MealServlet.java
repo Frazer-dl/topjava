@@ -61,7 +61,6 @@ public class MealServlet extends HttpServlet {
                     }
                     break;
                 default:
-                    System.out.println(request.getContextPath() + "/meals");
                     response.sendRedirect(request.getContextPath() + "/meals");
                     break;
             }
