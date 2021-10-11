@@ -1,12 +1,14 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+
 <html lang="ru">
 <head>
-    <title>Edit meal</title>
+    <Title><%=request.getAttribute("title")%></Title>
 </head>
-<body>
 <h3><a href="index.html">Home</a></h3>
+<body>
 <hr>
-<h2>Edit meal</h2>
+<h2><%=request.getAttribute("title")%></h2>
 <form action="${pageContext.request.contextPath}/meals" method="post">
     <input type="hidden" name="id" value="${meal.id}">
     <p>

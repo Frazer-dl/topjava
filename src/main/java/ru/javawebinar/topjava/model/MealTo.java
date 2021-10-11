@@ -26,7 +26,7 @@ public class MealTo {
         return "MealTo{" +
                 "getId=" + id +
                 "dateTime=" + dateTime +
-                ", description='" + description + '\'' +
+                ", description='" + description +
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';

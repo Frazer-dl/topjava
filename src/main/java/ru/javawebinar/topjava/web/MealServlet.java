@@ -1,11 +1,12 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.DAO.MealDao;
-import ru.javawebinar.topjava.DAO.MealDaoImpl;
+import ru.javawebinar.topjava.dao.MealDao;
+import ru.javawebinar.topjava.dao.MealDaoInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,41 +16,56 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    MealDao mealDao = new MealDaoImpl();
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+    private MealDao mealDao;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
 
-        List<MealTo> meals = MealsUtil.filteredByStreams(mealDao.read(), LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
-        if (request.getParameter("id") == null && request.getParameter("action") == null) {
+        Long id = getId(request.getParameter("id"));
+        String action = request.getParameter("action");
+        request.setAttribute("dateTimeFormatter", dateTimeFormatter);
+
+        if (id == null && action == null) {
+            List<MealTo> meals = MealsUtil.filteredByStreams(mealDao.read(), LocalTime.MIN, LocalTime.MAX, 2000);
             request.setAttribute("list", meals);
             request.getRequestDispatcher("meals.jsp").forward(request, response);
-        }
-        if (request.getParameter("action").equals("update")) {
-            Meal m = mealDao.read().stream()
-                    .filter(elem -> elem.getId() == Long.parseLong(request.getParameter("id")))
-                    .findFirst()
-                    .get();
-            request.setAttribute("meal", m);
-            request.getRequestDispatcher("edit.jsp").forward(request, response);
-        }
-        if (request.getParameter("action").equals("create")) {
-            request.getRequestDispatcher("edit.jsp").forward(request, response);
-        }
-        if (request.getParameter("action").equals("delete")) {
-            mealDao.delete(mealDao.read().stream()
-                    .filter(elem -> elem.getId() == Long.parseLong(request.getParameter("id")))
-                    .findFirst()
-                    .get().getId());
-            request.getRequestDispatcher("redirect.jsp").forward(request, response);
+        } else {
+            Meal meal;
+            switch (action) {
+                case "create":
+                    request.setAttribute("title", "Add meal");
+                    log.debug("Creating...");
+                    request.getRequestDispatcher("edit.jsp").forward(request, response);
+                    break;
+                case "update":
+                    meal = mealDao.read(id);
+                    request.setAttribute("meal", meal);
+                    request.setAttribute("title", "Edit meal");
+                    log.debug("Updating...");
+                    request.getRequestDispatcher("edit.jsp").forward(request, response);
+                    break;
+                case "delete":
+                    mealDao.delete(mealDao.read(id).getId());
+                    if (mealDao.read(Long.parseLong(request.getParameter("id"))) == null) {
+                        log.debug("Meal id=" + request.getParameter("id") + " deleted");
+                    } else {
+                        log.debug("Meal id=" + request.getParameter("id") + " not deleted");
+                    }
+                    break;
+                default:
+                    System.out.println(request.getContextPath() + "/meals");
+                    response.sendRedirect(request.getContextPath() + "/meals");
+                    break;
+            }
+            response.sendRedirect(request.getContextPath() + "/meals");
         }
     }
 
@@ -57,33 +73,46 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        boolean save = request.getParameter("save") != null;
-        String str = request.getParameter("date");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH);
-        LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
+        Long id = getId(request.getParameter("id"));
+        LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("date"));
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        if (save && request.getParameter("id").isEmpty()) {
-            try {
-                Meal m = new Meal(0L, dateTime, description, calories);
-                mealDao.create(m);
-            } catch (Exception e) {
-                log.debug("Can't create");
+        if (id == null) {
+            Meal meal = mealDao.create(new Meal(null, dateTime, description, calories));
+            if (meal == null) {
+                log.debug("Meal id=" + request.getParameter("id") + " not created");
+            } else {
+                log.debug("Meal id=" + request.getParameter("id") + " created");
+            }
+        } else {
+            Meal meal = mealDao.update(new Meal(id, dateTime, description, calories));
+            if (meal == null) {
+                log.debug("Meal id=" + request.getParameter("id") + " not updated");
+            } else {
+                log.debug("Meal id=" + request.getParameter("id") + " updated");
             }
         }
 
-        if (save && !request.getParameter("id").isEmpty()) {
-            try {
-                Meal meal = new Meal(mealDao.read(Long.parseLong(request.getParameter("id"))).getId(),
-                        dateTime,
-                        description,
-                        calories);
-                mealDao.update(meal);
-            } catch (Exception e) {
-                log.debug("Can't update");
-            }
+        response.sendRedirect(request.getContextPath() + "/meals");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        mealDao = new MealDaoInMemory();
+        System.out.println(mealDao.read().size());
+        System.out.println(mealDao.read().isEmpty());
+        if (mealDao.read().isEmpty()) {
+            log.debug("Meals not initialized");
+        } else {
+            log.debug("Meals initialized");
         }
-        request.getRequestDispatcher("redirect.jsp").forward(request, response);
+    }
+
+    private Long getId(String id) {
+        if (id == null || id.isEmpty()) {
+            return null;
+        }
+        return Long.parseLong(id);
     }
 }

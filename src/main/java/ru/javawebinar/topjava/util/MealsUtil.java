@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.DAO.MealDao;
-import ru.javawebinar.topjava.DAO.MealDaoImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 
