@@ -3,28 +3,28 @@
 
 <html lang="ru">
 <head>
-    <Title><%=request.getAttribute("title")%></Title>
+    <Title>${meal.id != defaultMeal.id ? "Edit meal" : "Add meal"}</Title>
 </head>
 <h3><a href="index.html">Home</a></h3>
 <body>
 <hr>
-<h2><%=request.getAttribute("title")%></h2>
+<h2>${meal.id != defaultMeal.id ? "Edit meal" : "Add meal"}</h2>
 <form action="${pageContext.request.contextPath}/meals" method="post">
     <input type="hidden" name="id" value="${meal.id}">
     <p>
         <label for="date">DateTime: </label>
-        <input type="datetime-local" id="date" name="date" value="${meal.dateTime == null ? "" : meal.dateTime}">
+        <input type="datetime-local" id="date" name="date" value="${meal.dateTime}">
     </p>
     <p>
         <label for="description">Description: </label>
-        <input type="text" id="description" name="description" value="${meal.description == null ? "" : meal.description}">
+        <input type="text" id="description" name="description" value="${meal.description}">
     </p>
     <p>
         <label for="calories">Calories: </label>
-        <input type="number" id="calories" name="calories" value="${meal.calories == null ? "" : meal.calories}">
+        <input type="number" id="calories" name="calories" value="${meal.calories != defaultMeal.calories ? meal.calories : ""}">
     </p>
     <p>
-        <input type="submit" name="save" value="Save">
+        <input type="submit" value="Save">
         <a href="${pageContext.request.contextPath}/meals"> <button type="button">Cancel</button></a>
     </p>
 </form>

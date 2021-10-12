@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-
 public class MealDaoInMemory implements MealDao {
     private final Map<Long, Meal> repository = new ConcurrentHashMap<>();
-    private final AtomicLong size = new AtomicLong();
+    private final AtomicLong counter = new AtomicLong();
 
     public MealDaoInMemory() {
         Arrays.asList(
@@ -30,12 +29,8 @@ public class MealDaoInMemory implements MealDao {
 
     @Override
     public Meal create(Meal m) {
-        if (m.getId() == null) {
-            long id = size.incrementAndGet();
-            repository.put(id, new Meal(id, m.getDateTime(), m.getDescription(), m.getCalories()));
-            return repository.get(id);
-        }
-        return repository.get(m.getId());
+        long id = counter.incrementAndGet();
+        return repository.computeIfAbsent(id, v -> new Meal(id, m.getDateTime(), m.getDescription(), m.getCalories()));
     }
 
     @Override
@@ -50,16 +45,11 @@ public class MealDaoInMemory implements MealDao {
 
     @Override
     public Meal update(Meal m) {
-        if (repository.get(m.getId()) != null) {
-            repository.put(m.getId(), m);
-            return repository.get(m.getId());
-        }
-        return null;
+        return repository.computeIfPresent(m.getId(), (k, v) -> new Meal(m.getId(), m.getDateTime(), m.getDescription(), m.getCalories()));
     }
 
     @Override
     public void delete(long id) {
         repository.remove(id);
-        size.decrementAndGet();
     }
 }

@@ -16,44 +16,51 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private MealDao mealDao;
+    private final Meal defaultMeal = new Meal(null, null, "", 0);
+
+    @Override
+    public void init() throws ServletException {
+        mealDao = new MealDaoInMemory();
+        if (mealDao.read().isEmpty()) {
+            log.debug("Meals not initialized");
+        } else {
+            log.debug("Meals initialized");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
 
-        Long id = getId(request.getParameter("id"));
         String action = request.getParameter("action");
-        request.setAttribute("dateTimeFormatter", dateTimeFormatter);
+        request.setAttribute("formatter", formatter);
+        request.setAttribute("defaultMeal", defaultMeal);
 
-        if (id == null && action == null) {
-            List<MealTo> meals = MealsUtil.filteredByStreams(mealDao.read(), LocalTime.MIN, LocalTime.MAX, 2000);
-            request.setAttribute("list", meals);
-            request.getRequestDispatcher("meals.jsp").forward(request, response);
-        } else {
-            Meal meal;
+        if (action != null) {
+            Long id = getId(request);
             switch (action) {
                 case "create":
-                    request.setAttribute("title", "Add meal");
                     log.debug("Creating...");
+                    request.setAttribute("meal", new Meal(defaultMeal.getId(), defaultMeal.getDateTime(), defaultMeal.getDescription(), defaultMeal.getCalories()));
                     request.getRequestDispatcher("edit.jsp").forward(request, response);
                     break;
                 case "update":
-                    meal = mealDao.read(id);
-                    request.setAttribute("meal", meal);
-                    request.setAttribute("title", "Edit meal");
                     log.debug("Updating...");
+                    request.setAttribute("meal", mealDao.read(id));
                     request.getRequestDispatcher("edit.jsp").forward(request, response);
                     break;
                 case "delete":
-                    mealDao.delete(mealDao.read(id).getId());
+                    log.debug("Deleting...");
+                    mealDao.delete(id);
                     if (mealDao.read(Long.parseLong(request.getParameter("id"))) == null) {
                         log.debug("Meal id=" + request.getParameter("id") + " deleted");
                     } else {
@@ -65,6 +72,10 @@ public class MealServlet extends HttpServlet {
                     break;
             }
             response.sendRedirect(request.getContextPath() + "/meals");
+        } else {
+            List<MealTo> meals = MealsUtil.filteredByStreams(mealDao.read(), LocalTime.MIN, LocalTime.MAX, 2000);
+            request.setAttribute("list", meals);
+            request.getRequestDispatcher("meals.jsp").forward(request, response);
         }
     }
 
@@ -72,17 +83,18 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        Long id = getId(request.getParameter("id"));
+        Long id = getId(request);
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("date"));
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        if (id == null) {
-            Meal meal = mealDao.create(new Meal(null, dateTime, description, calories));
+        if (Objects.equals(id, defaultMeal.getId())) {
+            Meal meal = mealDao.create(new Meal(defaultMeal.getId(), dateTime, description, calories));
+            System.out.println(meal);
             if (meal == null) {
-                log.debug("Meal id=" + request.getParameter("id") + " not created");
+                log.debug("Meal not created");
             } else {
-                log.debug("Meal id=" + request.getParameter("id") + " created");
+                log.debug("Meal created");
             }
         } else {
             Meal meal = mealDao.update(new Meal(id, dateTime, description, calories));
@@ -96,19 +108,8 @@ public class MealServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/meals");
     }
 
-    @Override
-    public void init() throws ServletException {
-        mealDao = new MealDaoInMemory();
-        System.out.println(mealDao.read().size());
-        System.out.println(mealDao.read().isEmpty());
-        if (mealDao.read().isEmpty()) {
-            log.debug("Meals not initialized");
-        } else {
-            log.debug("Meals initialized");
-        }
-    }
-
-    private Long getId(String id) {
+    private Long getId(HttpServletRequest request) {
+        String id = request.getParameter("id");
         if (id == null || id.isEmpty()) {
             return null;
         }

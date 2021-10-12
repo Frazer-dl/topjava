@@ -1,5 +1,3 @@
-<%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.time.LocalDateTime" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -26,7 +24,7 @@
     <tbody>
     <c:forEach var="meal" items= "${list}">
         <tr style="color:${meal.isExcess() ? 'red' : 'green'}">
-            <td>${meal.dateTime.format(dateTimeFormatter)}</td>
+            <td>${meal.dateTime.format(formatter)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="meals?id=${meal.getId()}&action=update"> <button type="button">Update</button></a></td>
