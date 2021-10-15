@@ -1,4 +1,4 @@
-﻿package ru.javawebinar.topjava;
+package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

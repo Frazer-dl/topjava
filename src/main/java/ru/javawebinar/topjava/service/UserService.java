@@ -1,4 +1,4 @@
-﻿package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.service;
 
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.User;
