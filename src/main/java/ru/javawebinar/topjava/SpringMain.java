@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.MealServlet;
+import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
@@ -18,13 +19,16 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
-//            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
-//            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.USER));
+            adminUserController.create(new User(null, "Abc", "1", "password", Role.ADMIN));
+            adminUserController.create(new User(null, "Dca", "3", "password", Role.USER));
+            adminUserController.create(new User(null, "Abc", "4", "password", Role.USER));
+            adminUserController.create(new User(null, "Z", "2", "password", Role.USER));
+            System.out.println(adminUserController.getAll());
 //            System.out.println(adminUserController.getAll());
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-//            mealRestController.update(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 100), 1);
-//            mealRestController.get(1, 2);
+            SecurityUtil.setAuthUserId(1);
+            mealRestController.update(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 100), 1);
 //            mealRestController.create(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 50), 2);
 //            mealRestController.create(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 50), 2);
 //            mealRestController.update(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 511), 2);

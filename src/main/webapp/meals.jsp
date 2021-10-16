@@ -23,6 +23,22 @@
     <h2>Meals</h2>
     <a href="meals?userId=${userId}&action=create">Add Meal</a>
     <br><br>
+    <form method="get" action="meals">
+        <tr>
+            <input type="hidden" name="userId" value="${userId}">
+            <input type="hidden" name="action" value="filter">
+            <td><label for="startDate">Start Date: </label>
+                <input type="date" id="startDate" name=startDate value=""></td>
+            <td><label for="endDate">End Date: </label>
+                <input type="date" id="endDate" name="endDate"></td>
+            <td><label for="startTime">Start Time: </label>
+                <input type="time" id="startTime" name="startTime"></td>
+            <td><label for="endTime">End Time: </label>
+                <input type="time" id="endTime" name="endTime"></td>
+            <button type="submit">Filter</button>
+        </tr>
+    </form>
+    <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

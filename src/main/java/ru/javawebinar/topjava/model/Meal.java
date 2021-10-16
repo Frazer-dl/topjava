@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.model;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -52,7 +55,7 @@ public class Meal extends AbstractBaseEntity {
     }
 
     public boolean isNew() {
-        return id == null;
+        return super.isNew();
     }
 
     @Override
