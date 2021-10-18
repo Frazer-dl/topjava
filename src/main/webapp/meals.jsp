@@ -21,20 +21,19 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <a href="meals?userId=${userId}&action=create">Add Meal</a>
+    <a href="meals?action=create">Add Meal</a>
     <br><br>
     <form method="get" action="meals">
         <tr>
-            <input type="hidden" name="userId" value="${userId}">
             <input type="hidden" name="action" value="filter">
             <td><label for="startDate">Start Date: </label>
-                <input type="date" id="startDate" name=startDate value=""></td>
+                <input type="date" id="startDate" name=startDate value="${startDate}"></td>
             <td><label for="endDate">End Date: </label>
-                <input type="date" id="endDate" name="endDate"></td>
+                <input type="date" id="endDate" name="endDate" value="${endDate}"></td>
             <td><label for="startTime">Start Time: </label>
-                <input type="time" id="startTime" name="startTime"></td>
+                <input type="time" id="startTime" name="startTime" value="${startTime}"></td>
             <td><label for="endTime">End Time: </label>
-                <input type="time" id="endTime" name="endTime"></td>
+                <input type="time" id="endTime" name="endTime" value="${endTime}"></td>
             <button type="submit">Filter</button>
         </tr>
     </form>
@@ -53,15 +52,12 @@
             <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
-                        <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
-                        <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
-                        <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
                         ${fn:formatDateTime(meal.dateTime)}
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals?action=update&userId=${userId}&id=${meal.id}">Update</a></td>
-                <td><a href="meals?action=delete&userId=${userId}&id=${meal.id}">Delete</a></td>
+                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
+                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </table>

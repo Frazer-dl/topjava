@@ -47,53 +47,53 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        SecurityUtil.setAuthUserId(getUserId(request));
+
         if (meal.isNew()) {
             restController.create(meal);
         } else {
             restController.update(meal, meal.getId());
         }
-        response.sendRedirect(request.getContextPath()+ "/meals?userId=" + getUserId(request));
+        response.sendRedirect(request.getContextPath()+ "/meals?userId=" + SecurityUtil.authUserId());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        SecurityUtil.setAuthUserId(getUserId(request));
+
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("Delete {} userId={}", id, getUserId(request));
+                log.info("Delete {} userId={}", id, SecurityUtil.authUserId());
                 restController.delete(id);
-                response.sendRedirect(request.getContextPath()+ "/meals?userId=" + getUserId(request));
+                response.sendRedirect(request.getContextPath()+ "/meals?userId=" + SecurityUtil.authUserId());
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         restController.get(getId(request));
-                request.setAttribute("userId", getUserId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "filter":
-                request.setAttribute("userId", getUserId(request));
-
                 LocalDate startDate = request.getParameter("startDate").isEmpty() ?
-                        LocalDate.MIN : LocalDate.parse(request.getParameter("startDate"));
+                        null : LocalDate.parse(request.getParameter("startDate"));
+                request.setAttribute("startDate", startDate);
                 LocalTime startTime = request.getParameter("startTime").isEmpty() ?
-                        LocalTime.MIN : LocalTime.parse(request.getParameter("startTime"));
+                        null : LocalTime.parse(request.getParameter("startTime"));
+                request.setAttribute("startTime", startTime);
                 LocalDate endDate = request.getParameter("endDate").isEmpty() ?
-                        LocalDate.MAX : LocalDate.parse(request.getParameter("endDate"));
+                        null : LocalDate.parse(request.getParameter("endDate"));
+                request.setAttribute("endDate", endDate);
                 LocalTime endTime = request.getParameter("endTime").isEmpty() ?
-                        LocalTime.MAX : LocalTime.parse(request.getParameter("endTime"));
+                        null : LocalTime.parse(request.getParameter("endTime"));
+                request.setAttribute("endTime", endTime);
 
                 request.setAttribute("meals", restController.getFiltered(startDate, startTime, endDate, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
             case "all":
             default:
-                log.info("getAll {}", getUserId(request));
-                request.setAttribute("userId", getUserId(request));
+                log.info("getAll {}", SecurityUtil.authUserId());
                 request.setAttribute("meals", restController.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
@@ -103,10 +103,5 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private int getUserId(HttpServletRequest request) {
-        String paramUserId = Objects.requireNonNull(request.getParameter("userId"));
-        return Integer.parseInt(paramUserId);
     }
 }

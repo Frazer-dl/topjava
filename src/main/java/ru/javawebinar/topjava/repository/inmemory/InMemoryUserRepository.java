@@ -6,9 +6,8 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,7 +31,7 @@ public class InMemoryUserRepository implements UserRepository {
         if (user.isNew()) {
             int id = counter.incrementAndGet();
             user.setId(id);
-            return repository.put(id, user);
+            return repository.merge(id, user, (o, n) -> n);
         } else {
             return repository.computeIfPresent(user.getId(), (k, v) -> user);
         }
@@ -45,9 +44,9 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Collection<User> getAll() {
+    public List<User> getAll() {
         log.info("getAll");
-        return new ArrayList<>(repository.values()).stream()
+        return repository.values().stream()
                 .sorted(Comparator.comparing(User::getName).thenComparing(User::getEmail))
                 .collect(Collectors.toList());
     }

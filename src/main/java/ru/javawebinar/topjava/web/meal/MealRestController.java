@@ -17,7 +17,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
     private final MealService service;
 
@@ -47,13 +47,18 @@ public class MealRestController {
     }
 
     public void update(Meal meal, int id) {
-        log.info("update {} mealId={}", meal, id);
+        log.info("update {} mealId={} authUserId={}", meal, id, SecurityUtil.authUserId());
         assureIdConsistent(meal, id);
         service.update(meal, id, SecurityUtil.authUserId());
     }
 
     public Collection<MealTo> getFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        log.info("getFiltered startDate={} startTime={} endDate={} endTime={}", startDate, startTime, endDate, endTime);
-        return service.getFiltered(SecurityUtil.authUserId(), startDate, startTime, endDate, endTime);
+        log.info("getFiltered userId={}  caloriesPerDay={} startDate={} startTime={} endDate={} endTime={}",
+                SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(), startDate, startTime, endDate, endTime);
+        return service.getFiltered(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(),
+                startDate == null ? LocalDate.MIN : startDate,
+                startTime == null ? LocalTime.MIN : startTime,
+                endDate == null ? LocalDate.MAX : endDate,
+                endTime == null ? LocalTime.MAX : endTime);
     }
 }

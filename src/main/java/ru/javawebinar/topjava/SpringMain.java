@@ -5,11 +5,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 public class SpringMain {
@@ -18,6 +18,7 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
+            System.out.println(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 
             adminUserController.create(new User(null, "Вася", "1", "password", Role.ADMIN));
             adminUserController.create(new User(null, "Вася", "2", "password", Role.USER));
@@ -36,18 +37,11 @@ public class SpringMain {
             adminUserController.create(new User(null, "Герман", "15", "password", Role.USER));
             adminUserController.getAll().forEach(System.out::println);
 
+
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-            SecurityUtil.setAuthUserId(1);
-            mealRestController.update(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 100), 1);
+            mealRestController.create(new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "description", 1000));
+            mealRestController.update(new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "description", 100),1);
             mealRestController.getAll().forEach(System.out::println);
-//            mealRestController.create(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 50), 2);
-//            mealRestController.create(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 50), 2);
-//            mealRestController.update(new Meal(LocalDateTime.now().withSecond(0).withNano(0), "description", 511), 2);
-//            mealRestController.get(1, 2);
-//            System.out.println(mealRestController.getAll(2));
-//            mealRestController.delete(1,2);
-//            mealRestController.getAll(2);
-//            mealRestController.get(20, 1);
         }
     }
 }
