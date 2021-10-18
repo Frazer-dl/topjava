@@ -27,13 +27,13 @@
         <tr>
             <input type="hidden" name="action" value="filter">
             <td><label for="startDate">Start Date: </label>
-                <input type="date" id="startDate" name=startDate value="${startDate}"></td>
+                <input type="date" id="startDate" name=startDate value="${param.startDate}"></td>
             <td><label for="endDate">End Date: </label>
-                <input type="date" id="endDate" name="endDate" value="${endDate}"></td>
+                <input type="date" id="endDate" name="endDate" value="${param.endDate}"></td>
             <td><label for="startTime">Start Time: </label>
-                <input type="time" id="startTime" name="startTime" value="${startTime}"></td>
+                <input type="time" id="startTime" name="startTime" value="${param.startTime}"></td>
             <td><label for="endTime">End Time: </label>
-                <input type="time" id="endTime" name="endTime" value="${endTime}"></td>
+                <input type="time" id="endTime" name="endTime" value="${param.endTime}"></td>
             <button type="submit">Filter</button>
         </tr>
     </form>

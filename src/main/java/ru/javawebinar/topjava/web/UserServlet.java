@@ -24,7 +24,6 @@ public class UserServlet extends HttpServlet {
         log.debug("forward to meals from users");
         String authUserId = request.getParameter("userId");
         SecurityUtil.setAuthUserId(authUserId.isEmpty() ? SecurityUtil.authUserId() : Integer.parseInt(authUserId));
-        System.out.println(SecurityUtil.authUserId());
-        response.sendRedirect(request.getContextPath()+ "/meals?userId=" + SecurityUtil.authUserId());
+        response.sendRedirect(request.getContextPath()+ "/meals");
     }
 }

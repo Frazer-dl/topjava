@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
@@ -49,10 +50,10 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {} mealId={} authUserId={}", meal, id, SecurityUtil.authUserId());
         assureIdConsistent(meal, id);
-        service.update(meal, id, SecurityUtil.authUserId());
+        service.update(meal, SecurityUtil.authUserId());
     }
 
-    public Collection<MealTo> getFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public List<MealTo> getFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("getFiltered userId={}  caloriesPerDay={} startDate={} startTime={} endDate={} endTime={}",
                 SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(), startDate, startTime, endDate, endTime);
         return service.getFiltered(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(),

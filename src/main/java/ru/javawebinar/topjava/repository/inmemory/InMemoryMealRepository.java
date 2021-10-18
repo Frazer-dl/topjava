@@ -33,9 +33,9 @@ public class InMemoryMealRepository implements MealRepository {
         log.info("save {} userId={}", meal, userId);
         Map<Integer, Meal> mealMap = repository.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
-            int id = counter.incrementAndGet();
-            meal.setId(id);
-            return mealMap.merge(id, meal, (o, n) -> n);
+            meal.setId(counter.incrementAndGet());
+            mealMap.put(meal.getId(), meal);
+            return meal;
         }
         return mealMap.computeIfPresent(meal.getId(), (k, v) -> meal);
     }
@@ -70,10 +70,15 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getFiltered(int userId, LocalDate start, LocalDate end) {
         log.info("getFiltered {} start {} end{}", userId, start, end);
-        return repository.get(userId).values().stream()
-                .filter(m -> DateTimeUtil.isBetweenClosed( m.getDate(), start, end))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        Map<Integer, Meal> mealMap = repository.get(userId);
+        if (mealMap == null) {
+            return Collections.emptyList();
+        } else {
+            return mealMap.values().stream()
+                    .filter(m -> DateTimeUtil.isBetweenClosed(m.getDate(), start, end))
+                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                    .collect(Collectors.toList());
+        }
     }
 }
 
