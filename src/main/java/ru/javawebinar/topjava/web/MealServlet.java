@@ -80,9 +80,9 @@ public class MealServlet extends HttpServlet {
                 LocalDate startDate = sDate == null ? null : (sDate.isEmpty() ? null : LocalDate.parse(sDate));
                 String sTime = request.getParameter("startTime");
                 LocalTime startTime = sTime == null ? null : (sTime.isEmpty() ? null : LocalTime.parse(sTime));
-                String eDate = request.getParameter("startDate");
+                String eDate = request.getParameter("endDate");
                 LocalDate endDate = eDate == null ? null : (eDate.isEmpty() ? null : LocalDate.parse(eDate));
-                String eTime = request.getParameter("startTime");
+                String eTime = request.getParameter("endTime");
                 LocalTime endTime = sTime == null ? null : (eTime.isEmpty() ? null : LocalTime.parse(eTime));
                 
                 request.setAttribute("meals", restController.getFiltered(startDate, startTime, endDate, endTime));
