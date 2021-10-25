@@ -11,10 +11,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MealTestData {
-    public static final int USER_ID = 100001;
-    public static final int MEAL_ID = 100002;
+    public static final int FIRST_USER_ID = 100000;
+    public static final int SECOND_USER_ID = 100001;
+    public static final int FIRST_USER_MEAL_ID = 100005;
+    public static final int SECOND_USER_MEAL_ID = 100002;
     public static final int NOT_FOUND = 10;
-    public static final Meal testMeal = new Meal(100001, LocalDateTime.of(2021, 7, 11, 6,51,10), "Breakfast", 2128);
+    public static final Meal TEST_MEAL = new Meal(LocalDateTime.of(2021, 7, 11, 6,51,10), "Breakfast", 2128);
     public static final List<Meal> meals = Arrays.asList(
             new Meal(100001, LocalDateTime.of(2021,7, 11, 6,51,10), "Breakfast", 2128),
             new Meal(100001, LocalDateTime.of(2021,4,27, 17,25,54),"Lunch", 1021),
@@ -35,8 +37,8 @@ public class MealTestData {
     }
 
     public static Meal getUpdated() {
-        Meal meal = new Meal(testMeal);
-        meal.setId(MEAL_ID);
+        Meal meal = new Meal(TEST_MEAL);
+        meal.setId(FIRST_USER_MEAL_ID);
         meal.setDateTime(LocalDateTime.of(2021, 12, 12, 23,59,59).truncatedTo(ChronoUnit.MINUTES));
         meal.setDescription("new description");
         meal.setCalories(200);
@@ -45,10 +47,6 @@ public class MealTestData {
 
     public static void assertMatch(Meal actual, Meal expected) {
         assertThat(actual).usingRecursiveComparison().ignoringFields("id").isEqualTo(expected);
-    }
-
-    public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
-        assertMatch(actual, Arrays.asList(expected));
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
