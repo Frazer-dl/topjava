@@ -48,7 +48,7 @@ public class MealServiceTest {
 
     @Test
     public void getNotFoundMeal() {
-        assertThrows(NotFoundException.class, () -> mealService.get(NOT_FOUND, SECOND_USER_MEAL_ID_1));
+        assertThrows(NotFoundException.class, () -> mealService.get(NOT_FOUND, SECOND_USER_ID));
     }
 
     @Test
