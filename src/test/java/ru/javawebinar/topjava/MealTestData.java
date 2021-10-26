@@ -39,8 +39,7 @@ public class MealTestData {
     }
 
     public static Meal getUpdated() {
-        Meal meal = new Meal(firstUserMeal);
-        meal.setId(SECOND_USER_MEAL_ID_1);
+        Meal meal = new Meal(secondUserMeal_1);
         meal.setDateTime(LocalDateTime.of(2021, 12, 12, 23,59,59).truncatedTo(ChronoUnit.MINUTES));
         meal.setDescription("new description");
         meal.setCalories(200);
