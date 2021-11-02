@@ -5,16 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class JpaMealRepository implements MealRepository {
 
     @PersistenceContext
@@ -27,20 +25,15 @@ public class JpaMealRepository implements MealRepository {
         meal.setUser(usrRef);
         if (meal.isNew()) {
             em.persist(meal);
-            return meal;
         } else {
-            if (em.createNamedQuery(Meal.UPDATE)
-                    .setParameter("id", meal.getId())
-                    .setParameter("userId", userId)
-                    .setParameter("dateTime", meal.getDateTime())
-                    .setParameter("calories", meal.getCalories())
-                    .setParameter("description", meal.getDescription())
-                    .executeUpdate() != 0) {
-                return meal;
+            Meal meal_find = get(meal.getId(), userId);
+            if (meal_find == null) {
+                return null;
             } else {
-                throw new NotFoundException("meal_id=" + meal.getId() + " user_id="+ meal.getUser().getId() + " Not found");
+                return em.merge(meal);
             }
         }
+        return meal;
     }
 
     @Override

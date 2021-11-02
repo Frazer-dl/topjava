@@ -12,14 +12,12 @@ import java.time.LocalTime;
 
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:user_id"),
-        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.dateTime = :dateTime, m.calories = :calories , " +
-                "m.description = :description WHERE m.id=:id AND m.user.id = :userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:user_id ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_BETWEEN, query = "SELECT m FROM Meal m WHERE m.user.id=:user_id  AND m.dateTime >=:date_time_start " +
                 "AND m.dateTime <: date_time_end ORDER BY m.dateTime DESC")
 })
 @Entity
-@Table(name = "meals")
+@Table(name = "meals", uniqueConstraints={@UniqueConstraint(columnNames = {"user_id" , "date_time"})})
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
@@ -27,7 +25,7 @@ public class Meal extends AbstractBaseEntity {
     public static final String ALL_SORTED = "Meal.all_sorted";
     public static final String ALL_BETWEEN = "Meal.all_between";
 
-    @Column(name = "date_time", nullable = false, unique = true)
+    @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
 
@@ -36,12 +34,13 @@ public class Meal extends AbstractBaseEntity {
     @Size(max = 100)
     private String description;
 
-    @Column(name = "calories", nullable = false, columnDefinition = "int default 2000")
-    @Range(min = 10, max = 10000)
+    @Column(name = "calories", nullable = false)
+    @Range(min = 0, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @NotNull
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     public Meal() {
