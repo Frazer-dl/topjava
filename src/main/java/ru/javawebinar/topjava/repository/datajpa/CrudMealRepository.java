@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 
+import javax.persistence.JoinColumn;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +26,10 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Query("SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC")
     List<Meal> getAll(@Param("userId") int userId);
 
-    @Query("SELECT m from Meal m WHERE m.user.id=:userId AND m.dateTime >= :startDateTime AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC")
+    @Query("SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= :startDateTime AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC")
     List<Meal> getBetween(@Param("startDateTime") LocalDateTime startDate, @Param("endDateTime") LocalDateTime endDate, @Param("userId") int userId);
+
+    @Transactional
+    @Query("SELECT m FROM Meal m JOIN FETCH m.user WHERE m.id = :id AND m.user.id = :userId")
+    Meal getUserMeal(@Param("id") int id, @Param("userId") int userId);
 }
