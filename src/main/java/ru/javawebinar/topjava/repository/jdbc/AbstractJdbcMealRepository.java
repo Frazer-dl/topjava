@@ -12,7 +12,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public abstract class AbstractJdbcMealRepository implements MealRepository {
@@ -83,5 +82,5 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
                 ROW_MAPPER, userId, dateTimeConversion(startDateTime), dateTimeConversion(endDateTime));
     }
 
-    abstract <T> T dateTimeConversion(LocalDateTime dateTime);
+    protected abstract  <T> T dateTimeConversion(LocalDateTime dateTime);
 }
