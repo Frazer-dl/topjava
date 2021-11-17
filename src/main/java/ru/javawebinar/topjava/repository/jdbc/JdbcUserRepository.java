@@ -9,10 +9,16 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Repository
 @Transactional(readOnly = true)
@@ -38,18 +44,22 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     @Transactional
+    @NotNull
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
+            addRoles(user);
         } else if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
                 """, parameterSource) == 0) {
             return null;
         }
+        deleteRoles(user);
+        addRoles(user);
         return user;
     }
 
@@ -60,20 +70,44 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    @NotNull
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
-        return DataAccessUtils.singleResult(users);
+        return getRoles(DataAccessUtils.singleResult(users));
     }
 
     @Override
+    @NotNull
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        return DataAccessUtils.singleResult(users);
+        return getRoles(DataAccessUtils.singleResult(users));
     }
 
     @Override
+    @NotNull
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM users JOIN (SELECT u.*, string_agg(ur.role, ',') AS roles FROM users u " +
+                "JOIN user_roles ur on u.id=ur.user_id GROUP BY u.id)g on g.id=users.id ORDER BY users.name, users.email", ROW_MAPPER);
+    }
+
+    private User getRoles(User user) {
+        if (user != null) {
+            List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_roles WHERE user_id=?", Role.class, user.getId());
+            user.setRoles(roles);
+        }
+        return user;
+    }
+
+    private void deleteRoles(User user) {
+        jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
+    }
+
+    private void addRoles(User user) {
+        jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", user.getRoles(), user.getRoles().size(),
+                        (ppss, role) -> {
+                            ppss.setInt(1, user.id());
+                            ppss.setString(2, role.toString());
+                        });
     }
 }
