@@ -12,13 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -44,8 +40,8 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     @Transactional
-    @NotNull
     public User save(User user) {
+        ValidationUtil.validate(user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
         if (user.isNew()) {
@@ -60,6 +56,7 @@ public class JdbcUserRepository implements UserRepository {
         }
         deleteRoles(user);
         addRoles(user);
+        System.out.println(user);
         return user;
     }
 
@@ -70,14 +67,12 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    @NotNull
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
         return getRoles(DataAccessUtils.singleResult(users));
     }
 
     @Override
-    @NotNull
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
@@ -85,10 +80,17 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    @NotNull
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users JOIN (SELECT u.*, string_agg(ur.role, ',') AS roles FROM users u " +
-                "JOIN user_roles ur on u.id=ur.user_id GROUP BY u.id)g on g.id=users.id ORDER BY users.name, users.email", ROW_MAPPER);
+//        return jdbcTemplate.query("SELECT * FROM users JOIN (SELECT u.*, string_agg(ur.role, ',') AS roles FROM users u " +
+//                "JOIN user_roles ur on u.id=ur.user_id GROUP BY u.id)g on g.id=users.id ORDER BY users.name, users.email", ROW_MAPPER);
+        List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        Map<Integer, Set<Role>> map = new HashMap<>();
+        jdbcTemplate.query("SELECT * FROM user_roles", rs -> {
+            map.computeIfAbsent(rs.getInt("user_id"), userId -> EnumSet.noneOf(Role.class))
+                    .add(Role.valueOf(rs.getString("role")));
+        });
+        users.forEach(u -> u.setRoles(map.get(u.getId())));
+        return users;
     }
 
     private User getRoles(User user) {
@@ -107,7 +109,7 @@ public class JdbcUserRepository implements UserRepository {
         jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", user.getRoles(), user.getRoles().size(),
                         (ppss, role) -> {
                             ppss.setInt(1, user.id());
-                            ppss.setString(2, role.toString());
+                            ppss.setString(2, role.name());
                         });
     }
 }

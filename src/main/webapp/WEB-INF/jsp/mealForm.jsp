@@ -10,26 +10,21 @@
     <h3><spring:message code="meal.title"/></h3>
     <hr>
     <h2>
-        <c:if test="${edit == true}">
-            <spring:message code="meal.edit"/>
-        </c:if>
-        <c:if test="${edit == false}">
-            <spring:message code="meal.add"/>
-        </c:if>
+        <spring:message code="${meal.isNew() ? 'meal.add' : 'meal.edit'}"/>
     </h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="${pageContext.request.contextPath}/meals/save">
+    <form method="post" action="${pageContext.request.contextPath}/meals">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
-            <dt>DateTime:</dt>
+            <dt><spring:message code="meal.form.dateTime"/></dt>
             <dd><input type="datetime-local" value="${meal.dateTime}" name="dateTime" required></dd>
         </dl>
         <dl>
-            <dt>Description:</dt>
+            <dt><spring:message code="meal.form.description"/></dt>
             <dd><input type="text" value="${meal.description}" size=40 name="description" required></dd>
         </dl>
         <dl>
-            <dt>Calories:</dt>
+            <dt><spring:message code="meal.form.calories"/></dt>
             <dd><input type="number" value="${meal.calories}" name="calories" required></dd>
         </dl>
         <button type="submit"><spring:message code="meal.save"/></button>

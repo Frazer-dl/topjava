@@ -3,8 +3,10 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
@@ -14,12 +16,15 @@ public class UserTestData {
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 1;
     public static final int NOT_FOUND = 10;
+    public static final int NEW_USER_ID = START_SEQ + 11;
+
 
     public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
+    public static final User new_user = new User(NEW_USER_ID, "New user", "newuser@gmail.com", "password", 2000, true, new Date(), Set.of());
 
     public static User getNew() {
-        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Arrays.asList(Role.ADMIN, Role.USER));
     }
 
     public static User getUpdated() {

@@ -11,8 +11,8 @@
 <section>
     <h3><spring:message code="meal.title"/></h3>
     <hr/>
-    <form method="get" action="${pageContext.request.contextPath}/meals/filter">
-        <input type="hidden" name="action" value="filter">
+    <base target="${pageContext.request.contextPath}">
+    <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="meal.startDate"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -32,7 +32,7 @@
         <button type="submit"><spring:message code="meal.filter"/></button>
     </form>
     <hr/>
-    <form method="get" action="${pageContext.request.contextPath}/meals/add">
+    <form method="get" action="meals/add">
         <button type="submit"><spring:message code="meal.add"/></button>
     </form>
     <br><br>
@@ -55,17 +55,17 @@
                         <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
                             ${fn:formatDateTime(meal.dateTime)}
                 </td>
-                <td><c:out value="${meal.description}"/></td>
-                <td><c:out value="${meal.calories}"/></td>
+                <td>${meal.description}</td>
+                <td>${meal.calories}</td>
                 <td>
-                    <form method="get" action="${pageContext.request.contextPath}/meals/update">
+                    <form method="get" action="meals/update">
                         <button type="submit" value="${meal.id}" name="id">
                             <spring:message code="meal.update"/>
                         </button>
                     </form>
                 </td>
                 <td>
-                    <form method="get" action="${pageContext.request.contextPath}/meals/delete">
+                    <form method="get" action="meals/delete">
                         <button type="submit" value="${meal.id}" name="id">
                             <spring:message code="meal.delete"/>
                         </button>
