@@ -47,16 +47,16 @@ public class JdbcUserRepository implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            addRoles(user);
-        } else if (namedParameterJdbcTemplate.update("""
+        } else {
+            if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
                 """, parameterSource) == 0) {
-            return null;
+                return null;
+            }
+            deleteRoles(user);
         }
-        deleteRoles(user);
         addRoles(user);
-        System.out.println(user);
         return user;
     }
 
@@ -74,23 +74,14 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         return getRoles(DataAccessUtils.singleResult(users));
     }
 
     @Override
     public List<User> getAll() {
-//        return jdbcTemplate.query("SELECT * FROM users JOIN (SELECT u.*, string_agg(ur.role, ',') AS roles FROM users u " +
-//                "JOIN user_roles ur on u.id=ur.user_id GROUP BY u.id)g on g.id=users.id ORDER BY users.name, users.email", ROW_MAPPER);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
-        Map<Integer, Set<Role>> map = new HashMap<>();
-        jdbcTemplate.query("SELECT * FROM user_roles", rs -> {
-            map.computeIfAbsent(rs.getInt("user_id"), userId -> EnumSet.noneOf(Role.class))
-                    .add(Role.valueOf(rs.getString("role")));
-        });
-        users.forEach(u -> u.setRoles(map.get(u.getId())));
-        return users;
+        return jdbcTemplate.query("SELECT * FROM users JOIN (SELECT u.*, string_agg(ur.role, ',') AS roles FROM users u " +
+                "LEFT OUTER JOIN user_roles ur on u.id=ur.user_id GROUP BY u.id)g on g.id=users.id ORDER BY users.name, users.email", ROW_MAPPER);
     }
 
     private User getRoles(User user) {

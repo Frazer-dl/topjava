@@ -17,7 +17,8 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     User getByEmail(String email);
 
-    @EntityGraph(attributePaths = {"meals", "roles"})
-    @Query("SELECT u FROM User u WHERE u.id=?1")
-    User getWithMeals(int id);
+    //https://stackoverflow.com/questions/1995080/hibernate-criteria-returns-children-multiple-times-with-fetchtype-eager/46013654#46013654
+    @EntityGraph(attributePaths = {"meals"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT u FROM User u WHERE u.id=:id")
+    User getWithMeals(@Param("id") int id);
 }

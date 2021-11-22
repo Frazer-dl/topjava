@@ -10,14 +10,14 @@ import javax.validation.*;
 import java.util.Set;
 
 public class ValidationUtil {
+    private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static final Validator validator = validatorFactory.getValidator();
+
     private ValidationUtil() {
     }
 
     //https://alexkosarev.name/2018/07/30/bean-validation-api/
     public static <T> void validate(T object) {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
-
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);

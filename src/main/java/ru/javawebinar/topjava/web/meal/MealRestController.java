@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "rest/meals")
 public class MealRestController extends AbstractMealController {
-    private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 }

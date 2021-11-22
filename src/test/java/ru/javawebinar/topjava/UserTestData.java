@@ -21,7 +21,7 @@ public class UserTestData {
 
     public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
-    public static final User new_user = new User(NEW_USER_ID, "New user", "newuser@gmail.com", "password", 2000, true, new Date(), Set.of());
+    public static final User newUser = new User(NEW_USER_ID, "New user", "newuser@gmail.com", "password", 2000, true, new Date(), Set.of());
 
     public static User getNew() {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Arrays.asList(Role.ADMIN, Role.USER));

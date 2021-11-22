@@ -11,7 +11,6 @@
 <section>
     <h3><spring:message code="meal.title"/></h3>
     <hr/>
-    <base target="${pageContext.request.contextPath}">
     <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="meal.startDate"/></dt>
