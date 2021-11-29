@@ -56,4 +56,13 @@ public class AdminRestController extends AbstractUserController {
     public User getByMail(@RequestParam String email) {
         return super.getByMail(email);
     }
+
+    @GetMapping("/with-meals/{id}")
+    public ResponseEntity<User> getWithMeals(@PathVariable int id) {
+        User user = service.getWithMeals(id);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(user);
+    }
 }
