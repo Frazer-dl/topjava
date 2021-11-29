@@ -1,12 +1,8 @@
 package ru.javawebinar.topjava.to;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
 public class MealTo {
     private Integer id;
 
@@ -17,6 +13,16 @@ public class MealTo {
     private int calories;
 
     private boolean excess;
+
+    public MealTo() {}
+
+    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.id = id;
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.excess = excess;
+    }
 
     public Integer getId() {
         return id;
