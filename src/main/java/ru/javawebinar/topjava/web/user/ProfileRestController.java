@@ -39,11 +39,7 @@ public class ProfileRestController extends AbstractUserController {
     }
 
     @GetMapping("/with-meals")
-    public ResponseEntity<User> getWithMeals() {
-        User user = service.getWithMeals(authUserId());
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL)
-                .buildAndExpand(authUserId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(user);
+    public User getWithMeals() {
+        return super.getWithMeals(authUserId());
     }
 }

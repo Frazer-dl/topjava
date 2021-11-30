@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.util;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.format.Formatter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -43,11 +44,7 @@ public class DateTimeUtil {
         return StringUtils.hasLength(str) ? LocalTime.parse(str) : null;
     }
 
-    public static @Nullable
-    LocalDateTime parseLocalDateTime(@Nullable String str) {
-        return StringUtils.hasLength(str) ? LocalDateTime.parse(str) : null;
-    }
-
+    @Configuration
     public static class LocalDateFormatter implements Formatter<LocalDate> {
 
         @Override
@@ -61,6 +58,7 @@ public class DateTimeUtil {
         }
     }
 
+    @Configuration(value = "dateTime")
     public static class LocalTimeFormatter implements Formatter<LocalTime> {
 
         @Override
@@ -71,19 +69,6 @@ public class DateTimeUtil {
         @Override
         public String print(LocalTime localTime, Locale locale) {
             return localTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
-        }
-    }
-
-    public static class LocalDateTimeFormatter implements Formatter<LocalDateTime> {
-
-        @Override
-        public LocalDateTime parse(String text, Locale locale) {
-            return parseLocalDateTime(text);
-        }
-
-        @Override
-        public String print(LocalDateTime localDateTime, Locale locale) {
-            return localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         }
     }
 }

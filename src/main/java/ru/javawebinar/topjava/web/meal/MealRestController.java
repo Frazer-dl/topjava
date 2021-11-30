@@ -9,14 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,7 +41,7 @@ public class MealRestController extends AbstractMealController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Meal> createMeal(@RequestBody Meal meal) {
+    public ResponseEntity<Meal> createWithLocation(@RequestBody Meal meal) {
         Meal created = super.create(meal);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -55,17 +52,15 @@ public class MealRestController extends AbstractMealController {
     @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Meal meal,@PathVariable int id) {
+    public void update(@RequestBody Meal meal, @PathVariable int id) {
         super.update(meal, id);
     }
 
     @GetMapping("/filter")
-    public List<MealTo> getBetween(@RequestParam @Nullable Object startDate, @RequestParam @Nullable Object startTime,
-                                   @RequestParam @Nullable Object endDate, @RequestParam @Nullable Object endTime) {
-        LocalDate localDateStart = new DateTimeUtil.LocalDateFormatter().parse((String)startDate, Locale.ROOT);
-        LocalTime localTimeStart = new DateTimeUtil.LocalTimeFormatter().parse((String)startTime, Locale.ROOT);
-        LocalDate localDateEnd = new DateTimeUtil.LocalDateFormatter().parse((String)endDate, Locale.ROOT);
-        LocalTime localTimeEnd = new DateTimeUtil.LocalTimeFormatter().parse((String)endTime, Locale.ROOT);
-        return super.getBetween(localDateStart, localTimeStart, localDateEnd, localTimeEnd);
+    public List<MealTo> getBetween(@RequestParam(value = "startDate", required = false)  @Nullable  LocalDate startDate,
+                                   @RequestParam(value = "startTime", required = false) @Nullable LocalTime startTime,
+                                   @RequestParam(value = "endDate", required = false) @Nullable LocalDate endDate,
+                                   @RequestParam(value = "endTime", required = false)  @Nullable LocalTime endTime) {
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }
