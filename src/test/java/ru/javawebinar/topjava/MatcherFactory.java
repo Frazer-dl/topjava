@@ -21,28 +21,8 @@ public class MatcherFactory {
         return new Matcher<>(clazz, fieldsToIgnore);
     }
 
-    public static <T> SimpleMatcher<T> simpleMatcher(Class<T> clazz) {
-        return new SimpleMatcher<>(clazz);
-    }
-
-    public static class SimpleMatcher<T> {
-        private final Class<T> clazz;
-
-        private SimpleMatcher(Class<T> clazz) {
-            this.clazz = clazz;
-        }
-
-        private static String getContent(MvcResult result) throws UnsupportedEncodingException {
-            return result.getResponse().getContentAsString();
-        }
-
-        public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
-            assertThat(actual).isEqualTo(expected);
-        }
-
-        public ResultMatcher contentJson(Iterable<T> expected) {
-            return result -> assertMatch(JsonUtil.readValues(getContent(result), clazz), expected);
-        }
+    public static <T> Matcher<T> simpleMatcher(Class<T> clazz) {
+        return new Matcher<>(clazz);
     }
 
     public static class Matcher<T> {
@@ -59,7 +39,11 @@ public class MatcherFactory {
         }
 
         public void assertMatch(T actual, T expected) {
-            assertThat(actual).usingRecursiveComparison().ignoringFields(fieldsToIgnore).isEqualTo(expected);
+            if (fieldsToIgnore == null) {
+                assertThat(actual).isEqualTo(expected);
+            } else {
+                assertThat(actual).usingRecursiveComparison().ignoringFields(fieldsToIgnore).isEqualTo(expected);
+            }
         }
 
         @SafeVarargs
