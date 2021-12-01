@@ -28,13 +28,13 @@ public abstract class AbstractBaseEntity implements Persistable<Integer> {
         this.id = id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     @Override
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int id() {
