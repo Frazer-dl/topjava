@@ -21,6 +21,30 @@ public class MatcherFactory {
         return new Matcher<>(clazz, fieldsToIgnore);
     }
 
+    public static <T> SimpleMatcher<T> simpleMatcher(Class<T> clazz) {
+        return new SimpleMatcher<>(clazz);
+    }
+
+    public static class SimpleMatcher<T> {
+        private final Class<T> clazz;
+
+        private SimpleMatcher(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        private static String getContent(MvcResult result) throws UnsupportedEncodingException {
+            return result.getResponse().getContentAsString();
+        }
+
+        public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
+            assertThat(actual).isEqualTo(expected);
+        }
+
+        public ResultMatcher contentJson(Iterable<T> expected) {
+            return result -> assertMatch(JsonUtil.readValues(getContent(result), clazz), expected);
+        }
+    }
+
     public static class Matcher<T> {
         private final Class<T> clazz;
         private final String[] fieldsToIgnore;

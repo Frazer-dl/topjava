@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.assertj.core.matcher.AssertionMatcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -9,14 +8,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,13 +31,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(result -> new AssertionMatcher<List<MealTo>>() {
-                    @Override
-                    public void assertion(List<MealTo> actual) throws AssertionError {
-                        assertEquals(actual, mealsTo);
-                    }
-                });
-
+                .andExpect(MEAL_TO_SIMPLE_MATCHER.contentJson(mealsTo));
     }
 
     @Test
@@ -94,12 +83,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .param("endDate", "2020-01-31").param("endTime", "20:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(result -> new AssertionMatcher<List<MealTo>>() {
-                    @Override
-                    public void assertion(List<MealTo> actual) throws AssertionError {
-                        assertEquals(actual, filteredMeals1);
-                    }
-                });
+                .andExpect(MEAL_TO_SIMPLE_MATCHER.contentJson(filteredMeals1));
     }
 
     @Test
@@ -108,11 +92,12 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .param("startDate", "2020-01-31").param("endTime", "20:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(result -> new AssertionMatcher<List<MealTo>>() {
-                    @Override
-                    public void assertion(List<MealTo> actual) throws AssertionError {
-                        assertEquals(actual, filteredMeals2);
-                    }
-                });
+                .andExpect(MEAL_TO_SIMPLE_MATCHER.contentJson(filteredMeals2));
+
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("endDate", "2020-01-30").param("startTime", "10:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MEAL_TO_SIMPLE_MATCHER.contentJson(filteredMeals3));
     }
 }
