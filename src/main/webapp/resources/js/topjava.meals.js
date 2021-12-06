@@ -43,23 +43,16 @@ $(function () {
 function filterMealsByDate() {
     $.ajax({
         type: "GET",
-        url: ctx.ajaxUrl + "filter/",
-        data: $('filter').serialize()
+        url: ctx.ajaxUrl + "filter",
+        data: $('#filter').serialize()
     }).done(function () {
-        updateTable();
         successNoty("Filtered");
     })
 }
 
 function clearFilterMealsByDate() {
-    $.ajax({
-        type: "GET",
-        url: ctx.ajaxUrl
-    }).done(function () {
-        updateTable();
-        $(':input', '#filter').val('');
-        successNoty("Filter cleared");
-    })
+    updateTable();
+    $(':input', '#filter').val('');
 }
 
 

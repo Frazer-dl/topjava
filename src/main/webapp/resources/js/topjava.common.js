@@ -27,7 +27,6 @@ function deleteRow(id) {
         url: ctx.ajaxUrl + id,
         type: "DELETE"
     }).done(function () {
-        updateTable();
         successNoty("Deleted");
     });
 }

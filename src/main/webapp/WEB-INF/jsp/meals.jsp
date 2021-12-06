@@ -62,7 +62,7 @@
             <c:forEach items="${meals}" var="meal">
                 <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>
                 <tr data-mealExcess="${meal.excess}">
-                    <td>${fn:formatDateTime(meal.dateTime)}</td>
+                    <td id="dateTimeRow">${fn:formatDateTime(meal.dateTime)}</td>
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
                     <td><a><span class="fa fa-pencil"></span></a></td>
