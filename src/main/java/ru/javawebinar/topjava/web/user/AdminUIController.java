@@ -32,4 +32,14 @@ public class AdminUIController extends AbstractUserController {
                        @RequestParam String password) {
         super.create(new User(null, name, email, password, Role.USER));
     }
+
+    @PostMapping("/{id}/{checkbox}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void enable(@PathVariable int id, @PathVariable String checkbox) {
+        User user = super.get(id);
+        if (user.isEnabled() != checkbox.equals("true")) {
+            user.setEnabled(checkbox.equals("true"));
+            super.update(user, id);
+        }
+    }
 }

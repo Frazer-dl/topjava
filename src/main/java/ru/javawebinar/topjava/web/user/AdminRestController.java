@@ -61,4 +61,14 @@ public class AdminRestController extends AbstractUserController {
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
     }
+
+    @PostMapping("/{id}/{checkbox}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void enable(@PathVariable int id, @PathVariable String checkbox) {
+        User user = super.get(id);
+        if (user.isEnabled() != checkbox.equals("true")) {
+            user.setEnabled(checkbox.equals("true"));
+            super.update(user, id);
+        }
+    }
 }

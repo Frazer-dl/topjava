@@ -45,3 +45,24 @@ $(function () {
         })
     );
 });
+
+function checkBox(id) {
+    var chbox;
+    chbox=document.getElementById('checkbox');
+    if (chbox.checked) {
+        $.ajax({
+            type: "POST",
+            url: ctx.ajaxUrl + id +"/" + true
+        }).done(function () {
+            updateTable();
+        })
+    }
+    else {
+        $.ajax({
+            type: "POST",
+            url: ctx.ajaxUrl + id +"/" + false
+        }).done(function () {
+            updateTable();
+        })
+    }
+}
