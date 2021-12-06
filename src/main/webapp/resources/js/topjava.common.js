@@ -27,6 +27,7 @@ function deleteRow(id) {
         url: ctx.ajaxUrl + id,
         type: "DELETE"
     }).done(function () {
+        updateTable();
         successNoty("Deleted");
     });
 }
@@ -34,6 +35,7 @@ function deleteRow(id) {
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
+        filterMealsByDate();
     });
 }
 
