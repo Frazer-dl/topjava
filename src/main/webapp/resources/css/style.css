@@ -27,11 +27,11 @@ tr[data-meal-excess="true"] {
     cursor: pointer;
 }
 tr[user-check-box="false"] {
-    background-color: gray;
+    color: gray;
 }
 
 tr[user-check-box="true"] {
-    background-color: darkgrey;
+    color: black;
 }
 
 /*https://getbootstrap.com/docs/4.0/examples/sticky-footer/sticky-footer.css*/

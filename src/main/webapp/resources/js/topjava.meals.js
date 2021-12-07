@@ -2,10 +2,15 @@ let mealAjaxUrl = "ajax/profile/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
 let ctx = {
-    ajaxUrl: mealAjaxUrl
+    ajaxUrl: mealAjaxUrl,
+    update: function () {
+        $.ajax({
+            type: "GET",
+            url: mealAjaxUrl + "filter?",
+            data: $("#filter").serialize()
+        }).done(updateTable);
+    }
 };
-
-let filter = "";
 
 // $(document).ready(function () {
 $(function () {
@@ -42,16 +47,9 @@ $(function () {
     )
 })
 
-
-function filterMealsByDate() {
-    filter = "filter?" + $('#filter').serialize();
-    updateTable();
-}
-
 function clearFilterMealsByDate() {
     $(':input', '#filter').val('');
-    filter = "";
-    updateTable();
+    $.get(ctx.ajaxUrl, updateTable)
 }
 
 
