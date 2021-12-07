@@ -1,9 +1,11 @@
-const mealAjaxUrl = "ajax/profile/meals/";
+let mealAjaxUrl = "ajax/profile/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
-const ctx = {
+let ctx = {
     ajaxUrl: mealAjaxUrl
 };
+
+let filter = "";
 
 // $(document).ready(function () {
 $(function () {
@@ -40,20 +42,16 @@ $(function () {
     )
 })
 
+
 function filterMealsByDate() {
-    $.ajax({
-        type: "GET",
-        url: ctx.ajaxUrl + "filter",
-        data: $('#filter').serialize()
-    }).done(function () {
-        updateTable();
-        successNoty("Filtered");
-    })
+    filter = "filter?" + $('#filter').serialize();
+    updateTable();
 }
 
 function clearFilterMealsByDate() {
-    updateTable();
     $(':input', '#filter').val('');
+    filter = "";
+    updateTable();
 }
 
 
