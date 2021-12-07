@@ -46,6 +46,7 @@ function filterMealsByDate() {
         url: ctx.ajaxUrl + "filter",
         data: $('#filter').serialize()
     }).done(function () {
+        updateTable();
         successNoty("Filtered");
     })
 }

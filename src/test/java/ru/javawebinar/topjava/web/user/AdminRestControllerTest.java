@@ -106,10 +106,12 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         User created = USER_MATCHER.readFromJson(action);
 
-        perform(MockMvcRequestBuilders.post(REST_URL + created.getId() + "/" + false)
+        perform(MockMvcRequestBuilders.patch(REST_URL + created.getId())
+                .param("enabled","false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newUser)))
                 .andExpect(status().isNoContent());
+
         created.setEnabled(false);
         USER_MATCHER.assertMatch(userService.get(created.id()), created);
     }

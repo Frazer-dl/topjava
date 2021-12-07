@@ -46,23 +46,14 @@ $(function () {
     );
 });
 
-function checkBox(id) {
-    var chbox;
-    chbox=document.getElementById('checkbox');
-    if (chbox.checked) {
-        $.ajax({
-            type: "POST",
-            url: ctx.ajaxUrl + id +"/" + true
-        }).done(function () {
-            updateTable();
-        })
-    }
-    else {
-        $.ajax({
-            type: "POST",
-            url: ctx.ajaxUrl + id +"/" + false
-        }).done(function () {
-            updateTable();
-        })
-    }
+function checkBox(checkbox, id) {
+    var enabled = checkbox.is(":checked");
+    $.ajax({
+        type: "PATCH",
+        url: ctx.ajaxUrl + id + "?enabled=" + enabled,
+    }).done(function () {
+        successNoty(enabled ? "Enabled" : "Disabled")
+    }).fail(function () {
+        $(checkbox).prop("checked", !enabled);
+    })
 }
