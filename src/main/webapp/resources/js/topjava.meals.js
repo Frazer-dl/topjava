@@ -48,8 +48,8 @@ $(function () {
 })
 
 function clearFilterMealsByDate() {
-    $(':input', '#filter').val('');
-    $.get(ctx.ajaxUrl, updateTable)
+    $("#filter")[0].reset();
+    refresh();
 }
 
 

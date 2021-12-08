@@ -18,19 +18,19 @@
             <div class="row">
                 <div class="offset-1 col-2">
                     <label for="startDate"><spring:message code="meal.startDate"/>:</label>
-                    <input type="date" id="startDate" name="startDate" value="${param.startDate}">
+                    <input type="date" id="startDate" name="startDate">
                 </div>
                 <div class="col-2">
                     <label for="endDate"><spring:message code="meal.endDate"/>:</label>
-                    <input type="date" id="endDate" name="endDate" value="${param.endDate}">
+                    <input type="date" id="endDate" name="endDate">
                 </div>
                 <div class="offset-2 col-2">
                     <label for="startTime"><spring:message code="meal.startTime"/>:</label>
-                    <input type="time" id="startTime" name="startTime" value="${param.startTime}">
+                    <input type="time" id="startTime" name="startTime">
                 </div>
                 <div class="col-2">
                     <label for="endTime"><spring:message code="meal.endTime"/>:</label>
-                    <input type="time" id="endTime" name="endTime" value="${param.endTime}">
+                    <input type="time" id="endTime" name="endTime">
                 </div>
             </div>
         </form>

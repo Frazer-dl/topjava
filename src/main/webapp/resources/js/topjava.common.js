@@ -20,7 +20,6 @@ function makeEditable(datatableApi) {
 function add() {
     form.find(":input").val("");
     $("#editRow").modal();
-    $.get(ctx.ajaxUrl, updateTable);
 }
 
 function deleteRow(id) {
@@ -28,7 +27,7 @@ function deleteRow(id) {
         url: ctx.ajaxUrl + id,
         type: "DELETE"
     }).done(function () {
-        $.get(ctx.ajaxUrl, updateTable);
+        refresh();
         successNoty("Deleted");
     });
 }
@@ -44,7 +43,7 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        $.get(ctx.ajaxUrl, updateTable);
+        refresh();
         successNoty("Saved");
     });
 }
@@ -76,4 +75,8 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     });
     failedNote.show()
+}
+
+function refresh() {
+    $.get(ctx.update());
 }
