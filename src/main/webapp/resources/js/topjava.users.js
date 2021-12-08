@@ -55,7 +55,7 @@ function checkBox(checkbox, id) {
         type: "PATCH",
         url: ctx.ajaxUrl + id + "?enabled=" + enabled,
     }).done(function () {
-        refresh();
+        checkbox.closest("tr").attr("user-check-box", !!enabled);
         successNoty(enabled ? "Enabled" : "Disabled");
     }).fail(function () {
         $(checkbox).prop("checked", !enabled);
