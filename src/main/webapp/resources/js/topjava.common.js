@@ -23,6 +23,9 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
+            if (key === "dateTime") {
+                value = toLocalDateTime(value);
+            }
             form.find("input[name='" + key + "']").val(value);
         });
         $('#editRow').modal();
@@ -96,4 +99,8 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     });
     failedNote.show()
+}
+
+function toLocalDateTime(date) {
+    return date.substring(0, 10) + " " + date.substring(11, 16);
 }
