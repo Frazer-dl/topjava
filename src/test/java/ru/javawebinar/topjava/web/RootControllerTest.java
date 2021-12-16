@@ -21,13 +21,8 @@ class RootControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void unAuth() throws Exception {
+    void unAuthUsers() throws Exception {
         perform(get("/users"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
-
-        perform(get("/meals"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("http://localhost/login"));
@@ -41,5 +36,13 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"));
+    }
+
+    @Test
+    void unAuthMeals() throws Exception {
+        perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 }
