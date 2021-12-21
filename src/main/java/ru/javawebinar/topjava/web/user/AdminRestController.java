@@ -1,14 +1,11 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -33,14 +30,8 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) {
-        ValidationUtil.getErrorResponse(result);
-        User created;
-        try {
-            created = super.create(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("User with this email already exists");
-        }
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
+        User created = super.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -56,13 +47,8 @@ public class AdminRestController extends AbstractUserController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, BindingResult result, @PathVariable int id) {
-        ValidationUtil.getErrorResponse(result);
-        try {
-            super.update(user, id);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("User with this email already exists");
-        }
+    public void update(@Valid @RequestBody User user, @PathVariable int id) {
+        super.update(user, id);
     }
 
     @Override

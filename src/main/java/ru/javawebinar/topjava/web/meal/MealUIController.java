@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,7 @@ public class MealUIController extends AbstractMealController {
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createOrUpdate(@Valid Meal meal, BindingResult result) {
-        ValidationUtil.getErrorResponse(result);
+        ValidationUtil.throwExceptionIfErrors(result);
         try {
             if (meal.isNew()) {
                 super.create(meal);

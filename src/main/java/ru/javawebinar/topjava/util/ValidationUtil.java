@@ -76,7 +76,7 @@ public class ValidationUtil {
         return rootCause != null ? rootCause : t;
     }
 
-    public static void getErrorResponse(BindingResult result) {
+    public static void throwExceptionIfErrors(BindingResult result) {
         if (result.hasErrors()) {
             throw new IllegalRequestDataException(result.getFieldErrors().stream()
                     .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))

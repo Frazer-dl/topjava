@@ -110,6 +110,20 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateNotValidData() throws Exception {
+        User updated = getUpdated();
+        updated.setName("");
+        updated.setEmail("newemail");
+        updated.setPassword("new");
+        updated.setCaloriesPerDay(0);
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(updated, updated.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void createWithLocation() throws Exception {
         User newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -135,6 +149,20 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(admin))
                 .content(jsonWithPassword(newUser, newUser.getPassword())))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void createWithLocationNotValidData() throws Exception {
+        User newUser = getNew();
+        newUser.setName("");
+        newUser.setEmail("newemail");
+        newUser.setPassword("new");
+        newUser.setCaloriesPerDay(0);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(newUser, newUser.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
