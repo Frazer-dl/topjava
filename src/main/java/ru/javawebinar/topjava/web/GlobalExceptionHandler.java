@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,6 +32,18 @@ public class GlobalExceptionHandler {
         if (authorizedUser != null) {
             mav.addObject("userTo", authorizedUser.getUserTo());
         }
+        return mav;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ModelAndView duplicationEmailErrorHandler(HttpServletRequest req, DataIntegrityViolationException e) {
+        log.error("DataIntegrityViolationException at request " + req.getRequestURL(), e);
+        Throwable rootCause = ValidationUtil.getRootCause(e);
+
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        ModelAndView mav = new ModelAndView("exception",
+                Map.of("exception", rootCause, "message", "User with this email already exists", "status", httpStatus));
+        mav.setStatus(httpStatus);
         return mav;
     }
 }
