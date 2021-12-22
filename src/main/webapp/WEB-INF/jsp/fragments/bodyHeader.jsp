@@ -29,9 +29,12 @@
         <li class="nav-item dropdown">
             <a class="dropdown-toggle nav-link my-1 ml-2" data-toggle="dropdown"><spring:message code="common.lang"/></a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}?lang=en"><spring:message code="common.lang.en"/></a>
-                <a class="dropdown-item" href="${pageContext.request.contextPath}?lang=ru"><spring:message code="common.lang.ru"/></a>
+                <a class="dropdown-item" aria-valuetext="en" href="${requestScope['javax.servlet.forward.request_uri']}?lang=en"><spring:message code="common.lang.en"/></a>
+                <a class="dropdown-item" aria-valuetext="ru" href="${requestScope['javax.servlet.forward.request_uri']}?lang=ru"><spring:message code="common.lang.ru"/></a>
             </div>
         </li>
     </div>
 </nav>
+<script type="text/javascript">
+    var lang = '<spring:message code="common.lang"/>';
+</script>

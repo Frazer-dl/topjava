@@ -4,11 +4,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -38,10 +36,9 @@ public class MealUIController extends AbstractMealController {
         super.delete(id);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createOrUpdate(@Valid Meal meal, BindingResult result) {
-        ValidationUtil.throwExceptionIfErrors(result);
+    public void createOrUpdate(@Valid Meal meal) {
         try {
             if (meal.isNew()) {
                 super.create(meal);

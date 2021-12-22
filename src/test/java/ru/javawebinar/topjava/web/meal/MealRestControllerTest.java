@@ -76,7 +76,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         Meal updated = getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
@@ -89,7 +89,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     void updateDuplicateTime() throws Exception {
         Meal updated = getUpdated();
         updated.setDateTime(LocalDateTime.of(2020,1,30,13,0,0));
-        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isConflict());
@@ -111,7 +111,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     void createWithLocation() throws Exception {
         Meal newMeal = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(newMeal)));
 
@@ -128,7 +128,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         Meal newMeal = getNew();
         newMeal.setDateTime(LocalDateTime.of(2020,1,30,13,0,0));
         perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(newMeal)))
                 .andExpect(status().isConflict());
@@ -141,7 +141,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         newMeal.setDescription("a");
         newMeal.setCalories(5001);
         perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(newMeal)))
                 .andExpect(status().isUnprocessableEntity());

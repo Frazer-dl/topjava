@@ -7,11 +7,15 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
@@ -19,12 +23,15 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
+import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
+
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //  http://stackoverflow.com/a/22358422/548473
@@ -37,13 +44,25 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        if (ValidationUtil.getRootCause(e).getMessage().contains("users_unique_email_idx")) {
+            return logAndGetErrorInfo(req, new IllegalRequestDataException(
+                            isLocaleEnglish(req) ? "User with this email already exists" :
+                            "Пользователь с такой почтой уже существует"),
+                    true, DATA_ERROR);
+        } else if (ValidationUtil.getRootCause(e).getMessage().contains("Duplication data error")) {
+            return logAndGetErrorInfo(req, new IllegalRequestDataException(
+                            isLocaleEnglish(req) ? "Duplication data error. Try to set another time" :
+                                    "Дублирование данных. Попробуйте указать другое время"),
+                    true, DATA_ERROR);
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
-    public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class, MethodArgumentNotValidException.class, BindException.class})
+    public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e, BindingResult result) {
+        return logAndGetErrorInfo(req, new Exception(ValidationUtil.getExceptionDetails(result)), false, VALIDATION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -61,5 +80,9 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         return new ErrorInfo(req.getRequestURL(), errorType, e.getMessage());
+    }
+
+    private static boolean isLocaleEnglish(HttpServletRequest req) {
+        return Objects.requireNonNull(RequestContextUtils.getLocaleResolver(req)).resolveLocale(req) == Locale.ENGLISH;
     }
 }

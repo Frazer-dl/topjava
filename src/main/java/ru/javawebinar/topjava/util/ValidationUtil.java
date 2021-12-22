@@ -76,11 +76,9 @@ public class ValidationUtil {
         return rootCause != null ? rootCause : t;
     }
 
-    public static void throwExceptionIfErrors(BindingResult result) {
-        if (result.hasErrors()) {
-            throw new IllegalRequestDataException(result.getFieldErrors().stream()
-                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                    .collect(Collectors.joining("<br>")));
-        }
+    public static String getExceptionDetails(BindingResult result) {
+        return result.getFieldErrors().stream()
+                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.joining(","));
     }
 }

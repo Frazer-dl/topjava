@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class ProfileUIController extends AbstractUserController {
         return "profile";
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
             return "profile";
@@ -32,7 +32,7 @@ public class ProfileUIController extends AbstractUserController {
                 super.update(userTo, SecurityUtil.authUserId());
             }
             catch (DataIntegrityViolationException e) {
-                result.addError(new FieldError("userTo", "email", "User with this email already exists"));
+                result.rejectValue("userTo", "email", "User with this email already exists");
                 return "profile";
             }
             SecurityUtil.get().setTo(userTo);
@@ -48,7 +48,7 @@ public class ProfileUIController extends AbstractUserController {
         return "profile";
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
@@ -58,7 +58,7 @@ public class ProfileUIController extends AbstractUserController {
                 super.create(userTo);
             }
             catch (DataIntegrityViolationException e) {
-                result.addError(new FieldError("userTo", "email", "User with this email already exists"));
+                result.rejectValue("userTo", "email", "User with this email already exists");
                 return "profile";
             }
             status.setComplete();
