@@ -39,14 +39,10 @@ public class MealUIController extends AbstractMealController {
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createOrUpdate(@Valid Meal meal) {
-        try {
-            if (meal.isNew()) {
-                super.create(meal);
-            } else {
-                super.update(meal, meal.getId());
-            }
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Duplication data error");
+        if (meal.isNew()) {
+            super.create(meal);
+        } else {
+            super.update(meal, meal.getId());
         }
     }
 

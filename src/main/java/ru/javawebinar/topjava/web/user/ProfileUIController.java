@@ -32,7 +32,7 @@ public class ProfileUIController extends AbstractUserController {
                 super.update(userTo, SecurityUtil.authUserId());
             }
             catch (DataIntegrityViolationException e) {
-                result.rejectValue("userTo", "email", "User with this email already exists");
+                result.rejectValue(null, "409", "User with this email already exists");
                 return "profile";
             }
             SecurityUtil.get().setTo(userTo);
@@ -58,7 +58,7 @@ public class ProfileUIController extends AbstractUserController {
                 super.create(userTo);
             }
             catch (DataIntegrityViolationException e) {
-                result.rejectValue("userTo", "email", "User with this email already exists");
+                result.rejectValue(null, "409", "User with this email already exists");
                 return "profile";
             }
             status.setComplete();
